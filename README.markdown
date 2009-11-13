@@ -50,7 +50,9 @@ A known entry can be returned by passing the section handle and entry ID:
 	/api/:section/:entry_id
 
 ### Filtering (GET)
-Presently filters are not supported.
+Filters can be passed to the Data Source using the `filter[...]` parameter. For example:
+
+	/api/articles/?filter[title]=regexp:Test&filter[date]=2009-01-01
 
 ### Creating a new entry (POST)
 To create or update entries you can send an HTTP POST to the section URL:
