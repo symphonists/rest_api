@@ -4,6 +4,12 @@
 
 This extension is entirely in BETA and should NOT find its way near a production environment. There may well be security holes or bugs which could compromise the integrity of your data. (For which I hold no responsibility. Thx.)
 
+## TODO
+* add syntax for filtering using GET parameters
+* add maximum values for GET parameters to prevent malicious overloading (`limit`, `include` etc.)
+* double and triple check authentication procedure!
+* add support for other output formats namely CSV for Data Source output
+
 ## Installation
 
 1. Download the `rest_api` extension and add it to your extensions folder.
@@ -37,14 +43,14 @@ For example to get a list of the latest 5 entries from a section "Articles":
 
 	/api/articles/?include=title,body,date&limit=5&sort=date&order=desc
 
-### Querying a specific entry
+### Querying a specific entry (GET)
 
 A known entry can be returned by passing the section handle and entry ID:
 
 	/api/:section/:entry_id
 
-### Filtering
-Presently filters are not supported, but will be coming soon.
+### Filtering (GET)
+Presently filters are not supported.
 
 ### Creating a new entry (POST)
 To create or update entries you can send an HTTP POST to the section URL:
