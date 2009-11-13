@@ -1,6 +1,6 @@
 <?php
 
-define('DOCROOT', rtrim(dirname(__FILE__), '/') . '/../..');
+define('DOCROOT', rtrim(dirname(__FILE__), '/') . '/../../..');
 
 require_once(DOCROOT . '/symphony/lib/boot/bundle.php');
 require_once(CORE . '/class.frontend.php');
