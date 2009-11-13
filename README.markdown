@@ -62,7 +62,7 @@ a. As with normal Events, include an `id` variable in your POST containing the v
 
 b. Omit the `id` variable from your POST variables itself and send your request to:
 
-	/api/:section/:id
+	/api/:section/:entry_id
 
 ## Response formats
 By default the API returns XML but JSON is also supported by appending the `output` variable:
@@ -76,6 +76,8 @@ By default the API is private. You authenticate in one of two ways:
 
 a. By logging-in to Symphony and possessing an Author cookie in your browser.
 
-b. Pass a `token` value in the call to the API (either GET or POST). The token is the hash portion of your "remote login" URL for your user account. This only works when "allow remote login" is enabled.
+b. Pass a `token` value in the call to the API (either GET or POST). The token is the hash portion of your "remote login" URL for your user account. This only works when "allow remote login" is enabled. For example:
+
+	/api/:section/?token=8ca221bb
 
 If you "Enable public access" via System > Preferences you can choose which sections are viewable via the API without authentication.
