@@ -12,7 +12,7 @@ This extension is entirely in BETA and should NOT find its way near a production
 		
 		RewriteRule ^api(\/(.*\/?))?$ ./extensions/rest_api/lib/api.php?url=$1&%{QUERY_STRING}	[NC,L]
 
-4. Modify the settings for your API in System > Preferences
+4. Replace `/symphony/lib/toolkit/class.xmlelement.php` with the one included with this extension. (A temporary fix until merged into the core.)
 
 ## API usage
 
@@ -60,7 +60,7 @@ a. As with normal Events, include an `id` variable in your POST containing the v
 		
 	/api/:section
 
-b. Omit the `id` variable from your POSRT variables itself and send your request to:
+b. Omit the `id` variable from your POST variables itself and send your request to:
 
 	/api/:section/:id
 
