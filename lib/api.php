@@ -8,6 +8,7 @@ require_once(CORE . '/class.frontend.php');
 require_once(TOOLKIT . '/class.datasourcemanager.php');
 require_once(TOOLKIT . '/class.eventmanager.php');
 require_once(TOOLKIT . '/class.sectionmanager.php');
+require_once(TOOLKIT . '/class.fieldmanager.php');
 
 require_once(EXTENSIONS . '/rest_api/lib/class.rest_api.php');
 

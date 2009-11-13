@@ -24,7 +24,13 @@ Class REST_API {
 		self::$parameters['page'] = $_GET['page'];
 		self::$parameters['sort'] = $_GET['sort'];
 		self::$parameters['order'] = $_GET['order'];
-		self::$parameters['groupby'] = $_GET['groupby'];		
+		self::$parameters['groupby'] = $_GET['groupby'];
+		
+		self::$parameters['filters'] = $_GET['filter'];
+		if (!is_null(self::$parameters['filters']) && !is_array(self::$parameters['filters'])) {
+			self::$parameters['filters'] = array(self::$parameters['filters']);
+		}
+		
 		self::$parameters['token'] = trim($_REQUEST['token']);		
 		self::$output_type = (isset($_GET['output']) ? $_GET['output'] : 'xml');
 	}
@@ -114,9 +120,32 @@ Class REST_API {
 			if ($field) $ds->dsParamGROUP = $field['id'];
 		}
 		
+		
 		$entry_id = self::getParam('entry_id');
+		
 		if ($entry_id) {
 			$ds->dsParamFILTERS['id'] = $entry_id;
+		}		
+		elseif (self::$parameters['filters']) {
+			
+			$fm = new FieldManager($frontend);
+			
+			foreach(self::$parameters['filters'] as $field_handle => $filter_value) {				
+				$filter_value = rawurldecode($filter_value);
+				$field_id = $frontend->Database->fetchVar('id', 0, 
+					sprintf(
+						"SELECT `f`.`id` 
+						FROM `tbl_fields` AS `f`, `tbl_sections` AS `s` 
+						WHERE `s`.`id` = `f`.`parent_section` 
+						AND f.`element_name` = '%s' 
+						AND `s`.`handle` = '%s' LIMIT 1",
+						$field_handle,
+						self::getParam('section-handle')
+					)
+				);
+				if(is_numeric($field_id)) $ds->dsParamFILTERS[$field_id] = $filter_value;				
+			}
+			
 		}
 
 		self::sendOutput($ds->grab());
