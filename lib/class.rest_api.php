@@ -100,9 +100,9 @@ Class REST_API {
 
 		// fill the other parameters
 		if (!is_null(REST_API::getParam('limit'))) $ds->dsParamLIMIT = REST_API::getParam('limit');
-		if (!is_null(REST_API::getParam('page'))) $ds->dsParamLIMIT = REST_API::getParam('page');
-		if (!is_null(REST_API::getParam('sort'))) $ds->dsParamLIMIT = REST_API::getParam('sort');
-		if (!is_null(REST_API::getParam('order'))) $ds->dsParamLIMIT = REST_API::getParam('order');
+		if (!is_null(REST_API::getParam('page'))) $ds->dsParamSTARTPAGE = REST_API::getParam('page');
+		if (!is_null(REST_API::getParam('sort'))) $ds->dsParamSORT = REST_API::getParam('sort');
+		if (!is_null(REST_API::getParam('order'))) $ds->dsParamORDER = REST_API::getParam('order');
 		if (!is_null(REST_API::getParam('groupby'))) {
 			$field = end($frontend->Database->fetch(
 				sprintf(
