@@ -21,7 +21,7 @@
 		}
 
 		public static function getSource(){
-			return REST_API::getParam('section');
+			return REST_API::getSource();
 		}
 
 		public static function allowEditorToParse(){

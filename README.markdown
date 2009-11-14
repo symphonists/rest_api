@@ -5,20 +5,14 @@
 This extension is entirely in BETA and should NOT find its way near a production environment. There may well be security holes or bugs which could compromise the integrity of your data. (For which I hold no responsibility. Thx.)
 
 ## TODO
-* add syntax for filtering using GET parameters
 * add maximum values for GET parameters to prevent malicious overloading (`limit`, `include` etc.)
-* double and triple check authentication procedure!
 * add support for other output formats namely CSV for Data Source output
 
 ## Installation
 
 1. Download the `rest_api` extension and add it to your extensions folder.
 2. Enable the extension from the System > Extensions page in Symphony.
-3. Add this rewrite rule to your .htaccess file
-		
-		RewriteRule ^api(\/(.*\/?))?$ ./extensions/rest_api/lib/api.php?url=$1&%{QUERY_STRING}	[NC,L]
-
-4. Replace `/symphony/lib/toolkit/class.xmlelement.php` with the one included with this extension. (A temporary fix until merged into the core.)
+3. Replace `/symphony/lib/toolkit/class.xmlelement.php` with the one included with this extension. (A temporary fix until merged into the core.)
 
 ## API usage
 
@@ -28,7 +22,7 @@ The API provides access to Symphony via read queries (a Data Source) and create/
 
 Most simply a section can be queried passing the section handle:
 	
-	/api/:section
+	/symphony/api/:section
 
 This returns a standard XML result from a Data Source. Querystring parameters can be added for finer control:
 
@@ -41,23 +35,25 @@ This returns a standard XML result from a Data Source. Querystring parameters ca
 
 For example to get a list of the latest 5 entries from a section "Articles":
 
-	/api/articles/?include=title,body,date&limit=5&sort=date&order=desc
+	/symphony/api/articles/?include=title,body,date&limit=5&sort=date&order=desc
+
+Pagination can be returned by adding `system:pagination` to the value of the `elements` list e.g.
+
+	/symphony/api/articles/?include=title,body,system:pagination
 
 ### Querying a specific entry (GET)
 
 A known entry can be returned by passing the section handle and entry ID:
 
-	/api/:section/:entry_id
+	/symphony/api/:section/:entry_id
 
 ### Filtering (GET)
-Filters can be passed to the Data Source using the `filter[...]` parameter. For example:
-
-	/api/articles/?filter[title]=regexp:Test&filter[date]=2009-01-01
+Presently filters are not supported.
 
 ### Creating a new entry (POST)
 To create or update entries you can send an HTTP POST to the section URL:
 
-	/api/:section
+	/symphony/api/:section
 
 The format of the POST should follow exactly the field names for a normal event, i.e. `fields[title]`. Multiple entries can be created or updated by sending arrays of fields e.g. `fields[0][title]`, `fields[1][title]` which the API will detect automatically.
 
@@ -66,17 +62,17 @@ You can update an existing entry in one of two ways:
 
 a. As with normal Events, include an `id` variable in your POST containing the value of the entry ID to update and post to the section URL:
 		
-	/api/:section
+	/symphony/api/:section
 
 b. Omit the `id` variable from your POST variables itself and send your request to:
 
-	/api/:section/:entry_id
+	/symphony/api/:section/:entry_id
 
 ## Response formats
 By default the API returns XML but JSON is also supported by appending the `output` variable:
 
-	/api/articles/?output=xml
-	/api/articles/?output=json
+	/symphony/api/articles/?output=xml
+	/symphony/api/articles/?output=json
 
 ## Authentication and security
 
@@ -86,6 +82,6 @@ a. By logging-in to Symphony and possessing an Author cookie in your browser.
 
 b. Pass a `token` value in the call to the API (either GET or POST). The token is the hash portion of your "remote login" URL for your user account. This only works when "allow remote login" is enabled. For example:
 
-	/api/:section/?token=8ca221bb
+	/symphony/api/:section/?token=8ca221bb
 
 If you "Enable public access" via System > Preferences you can choose which sections are viewable via the API without authentication.

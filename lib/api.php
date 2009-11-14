@@ -13,12 +13,10 @@ require_once(TOOLKIT . '/class.fieldmanager.php');
 require_once(EXTENSIONS . '/rest_api/lib/class.rest_api.php');
 
 $frontend = Frontend::instance();
+REST_API::buildContext($frontend);
 
-REST_API::setParameters();
-REST_API::authenticate($frontend);
-
-if ($_POST) {	
-	REST_API::processEvent($frontend);
+if ($_POST) {
+	REST_API::processEvent();
 } else {	
-	REST_API::processDataSource($frontend);
+	REST_API::processDataSource();
 }
