@@ -56,6 +56,7 @@ Class REST_API {
 		
 		self::$token = trim($_REQUEST['token']);		
 		self::$output_type = (isset($_GET['output']) ? $_GET['output'] : 'xml');
+
 	}
 	
 	public function getSource() {
@@ -181,6 +182,15 @@ Class REST_API {
 				header('Content-Type: text/plain');
 				$output = json_encode(self::generateArray($response));
 			break;
+			case 'serialise':
+				header('Content-Type: text/plain');
+				$output = serialize(self::generateArray($response));
+				break;
+			case 'yaml':
+				header('Content-Type: text/yaml');
+				require_once('spyc-0.4.5/spyc.php');
+				$output = Spyc::YAMLDump(self::generateArray($response));
+				break;
 		 	case 'xml':
 				header('Content-Type: text/xml');
 				$output = $response->generate(true);
