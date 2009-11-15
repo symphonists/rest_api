@@ -187,7 +187,7 @@ Class REST_API {
 				$output = serialize(self::generateArray($response));
 				break;
 			case 'yaml':
-				header('Content-Type: text/yaml');
+				header('Content-Type: text/plain');
 				require_once('spyc-0.4.5/spyc.php');
 				$output = Spyc::YAMLDump(self::generateArray($response));
 				break;
