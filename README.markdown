@@ -69,10 +69,12 @@ b. Omit the `id` variable from your POST variables itself and send your request 
 	/symphony/api/:section/:entry_id
 
 ## Response formats
-By default the API returns XML but JSON is also supported by appending the `output` variable:
+By default the API returns XML but JSON, YAML and serialised PHP arrays are also supported by appending the `output` variable:
 
 	/symphony/api/articles/?output=xml
 	/symphony/api/articles/?output=json
+	/symphony/api/articles/?output=yaml
+	/symphony/api/articles/?output=serialise
 
 ## Authentication and security
 
