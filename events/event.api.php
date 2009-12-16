@@ -21,7 +21,7 @@
 		}
 
 		public static function getSource(){
-			return REST_API::getSource();
+			return Rest_Entries::getSource();
 		}
 
 		public static function allowEditorToParse(){

@@ -1,5 +1,9 @@
 # REST API
 
+## IN PROGRESS
+
+This extension is now rather broken. We are working on making it plugin-based for greater extensibility. Please do not use.
+
 ## DISCLAIMER
 
 This extension is entirely in BETA and should NOT find its way near a production environment. There may well be security holes or bugs which could compromise the integrity of your data. (For which I hold no responsibility. Thx.)

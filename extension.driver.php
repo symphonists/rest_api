@@ -58,7 +58,7 @@
 			
 			$rule = "
 	### START API RULES
-	RewriteRule ^symphony\/api(\/(.*\/?))?$ {$rewrite_base}extensions/rest_api/lib/api.php?url={$token}&%{QUERY_STRING}	[NC,L]
+	RewriteRule ^symphony\/api(\/(.*\/?))?$ {$rewrite_base}extensions/rest_api/lib/handler.php?url={$token}&%{QUERY_STRING}	[NC,L]
 	### END API RULES\n\n";
 			
 			$htaccess = self::__removeAPIRules($htaccess);

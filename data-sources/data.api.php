@@ -31,7 +31,7 @@
 		}
 		
 		public function getSource(){
-			return REST_API::getSource();
+			return Rest_Entries::getSource();
 		}
 		
 		public function allowEditorToParse(){
