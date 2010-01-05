@@ -38,9 +38,13 @@ Class Rest_Sections {
 			
 			foreach($sections as $section) {
 				
-				$meta = $section->get();
+				$section_xml = new XMLElement('section');
 				
-				$section_xml = new XMLElement('section', null, $meta);
+				$meta = $section->get();
+				foreach($meta as $key => $value) {
+					$section_xml->setAttribute(Lang::createHandle($key), $value);
+				}				
+				
 				$fields = $section->fetchFields();
 				
 				foreach($fields as $field) {
@@ -50,12 +54,15 @@ Class Rest_Sections {
 					$field_xml = new XMLElement($meta['element_name'], null);					
 					
 					foreach(self::$field_attributes as $attr) {
-						$field_xml->setAttribute($attr, $meta[$attr]);
+						$field_xml->setAttribute(Lang::createHandle($attr), $meta[$attr]);
 					}
 					
 					foreach($meta as $key => $value) {
 						if (in_array($key, self::$field_attributes)) continue;
-						$field_xml->appendChild(new XMLElement(Lang::createHandle($key), General::sanitize($value)));
+						$value = General::sanitize($value);
+						if ($value != '') {
+							$field_xml->appendChild(new XMLElement(Lang::createHandle($key), General::sanitize($value)));
+						}
 					}
 					
 					if (!in_array($meta['type'], self::$incompatible_publishpanel)) {
