@@ -2,7 +2,7 @@
 
 require_once(TOOLKIT . '/class.authormanager.php');
 
-Class Rest_Authors {
+Class REST_Authors {
 			
 	public function run() {
 		
@@ -14,7 +14,7 @@ Class Rest_Authors {
 		
 		// blah blah blah
 			
-		REST_API::sendOutput($response);		
+		REST_API::sendResponse($response);		
 	}
 	
 }

@@ -5,7 +5,7 @@ require_once(TOOLKIT . '/class.eventmanager.php');
 require_once(TOOLKIT . '/class.sectionmanager.php');
 require_once(TOOLKIT . '/class.fieldmanager.php');
 
-Class Rest_Entries {
+Class REST_Entries {
 		
 	protected static $section_handle = null;
 	protected static $section_id = null;	
@@ -29,7 +29,7 @@ Class Rest_Entries {
 		$section_id = $sm->fetchIDFromHandle($section_handle);
 		
 		if (!$section_id) {
-			REST_API::sendError('You must specify a section handle.');
+			REST_API::renderError('You must specify a section handle.');
 		} else {
 			self::$section_id = $section_id;
 			self::$section_handle = $section_handle;
@@ -50,9 +50,9 @@ Class Rest_Entries {
 		}
 		
 		if ($_POST) {
-			self::processEvent();
+			self::__processEvent();
 		} else {	
-			self::processDataSource();
+			self::__processDataSource();
 		}
 		
 	}
@@ -61,9 +61,8 @@ Class Rest_Entries {
 		return self::$section_id;
 	}
 		
-	public function processEvent() {
-		$eventManager = new EventManager(REST_API::getContext());
-		$event = $eventManager->create('api', NULL, false);
+	private function __processEvent() {
+		$event = new Event_RESTEntries();
 		
 		$entry_id = self::$entry_id;
 		
@@ -73,14 +72,14 @@ Class Rest_Entries {
 			$_POST['id'] = $entry_id;
 		}
 		
-		REST_API::sendOutput($event->load());
+		REST_API::sendResponse($event->load());
 	}
 	
-	public function processDataSource() {
+	private function __processDataSource() {
 		
-		// instantiate the "API" datasource
-		$datasourceManager = new DatasourceManager(REST_API::getContext());
-		$ds = $datasourceManager->create('api', NULL, false);
+		include_once(EXTENSIONS . '/rest_api/plugins/entries/data.api.php');
+		
+		$ds = new Datasource_RESTEntries(REST_API::getContext());
 
 		// remove placeholder elements
 		unset($ds->dsParamINCLUDEDELEMENTS);
@@ -145,7 +144,8 @@ Class Rest_Entries {
 			
 		}
 
-		REST_API::sendOutput($ds->grab());
+		$params = array();
+		REST_API::sendResponse($ds->grab($params));
 	}
 	
 }

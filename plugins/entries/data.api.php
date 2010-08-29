@@ -3,7 +3,7 @@
 	require_once(TOOLKIT . '/class.datasource.php');
 	require_once(TOOLKIT . '/class.fieldmanager.php');
 	
-	Class datasourceapi extends Datasource{
+	Class Datasource_RESTEntries extends Datasource{
 		
 		public $dsParamROOTELEMENT = 'response';
 		public $dsParamORDER = 'desc';

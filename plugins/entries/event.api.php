@@ -2,7 +2,7 @@
 
 	require_once(TOOLKIT . '/class.event.php');
 	
-	Class eventapi extends Event{
+	Class Event_RESTEntries extends Event{
 		
 		const ROOTELEMENT = 'response';
 		

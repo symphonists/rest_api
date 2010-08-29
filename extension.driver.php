@@ -9,8 +9,7 @@
 						 'version' => '0.1',
 						 'release-date' => '2009-07-27',
 						 'author' => array('name' => 'Nick Dunn',
-										   'website' => 'http://nick-dunn.co.uk',
-										   'email' => 'http://symphony-cms.com/members/nickdunn')
+										   'website' => 'http://nick-dunn.co.uk')
 				 		);
 		}
 		
@@ -76,6 +75,7 @@
 		
 		public function __SavePreferences($context){
 			
+			/*
 			if(!is_array($context['settings'])) {
 				$context['settings'] = array('rest_api' => array(
 					'public' => 'no',
@@ -96,9 +96,12 @@
 					'public_sections' => implode(',', $context['settings']['rest_api']['public_sections'])
 				);
 			}
+			*/
 		}
 
 		public function appendPreferences($context){
+
+			/*
 
 			$group = new XMLElement('fieldset');
 			$group->setAttribute('class', 'settings');
@@ -128,6 +131,8 @@
 			
 								
 			$context['wrapper']->appendChild($group);
+			
+			*/
 						
 		}
 		
