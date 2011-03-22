@@ -34,7 +34,7 @@ Class REST_API {
 		
 		// store request parameters for later
 		self::$_token = trim($_REQUEST['token']);		
-		self::$_output_type = (isset($_REQUEST['output']) ? $_REQUEST['output'] : 'xml');
+		self::$_output_type = (isset($_REQUEST['format']) ? $_REQUEST['format'] : 'xml');
 		self::$_uri = explode('/', trim($_REQUEST['url'], '/'));
 		
 		// get plugin name from the first segment in the URL
