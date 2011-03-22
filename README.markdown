@@ -1,8 +1,9 @@
 # REST API
 
-## TODO
-* add maximum values for GET parameters to prevent malicious overloading (`limit`, `include` etc.)
-* add support for other output formats namely CSV for Data Source output
+* Version: 1.0.0
+* Author: Nick Dunn <http://github.com/nickdunn/>
+* Build Date: 2011-03-22
+* Requirements: Symphony 2.2
 
 ## Installation
 
@@ -141,3 +142,4 @@ Here's a quick list of things that have yet to be implemented:
 * CSV export type (if there's a good library to convert an array into a CSV)
 * Author plugin
 * Section plugin no longer tries to use a field's `displayPublishPanel` as this is unstable for some extensions. Unfortunately this means it cannot return default values for fields (like the Section Schemas extension)
+* add maximum values for GET parameters to prevent malicious overloading (`limit`, `include` etc.)
