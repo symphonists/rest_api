@@ -27,79 +27,117 @@ For example the root of the Authors API plugin is at:
 
 Details on how to create plugins is included later in this README.
 
-### Authors
-
-### Entries
-
-The Entries plugin provides the same functionality of data sources and events.
-
-
-
-
-
-	
-	/symphony/api/entries/:section/:entry_id
-
-This returns a standard XML result from a Data Source. Querystring parameters can be added for finer control:
-
-* `include` a comma-delimited list of "Included Elements" (XML element names) to include for each entry
-* `limit` the number of entries to return
-* `page` the page number, if pagination is being used
-* `sort` the field (XML element name) to sort on
-* `order` the sort direction (asc, desc, rand)
-* `groupby` the field (XML element name) to group by
-
-For example to get a list of the latest 5 entries from a section "Articles":
-
-	/symphony/api/articles/?include=title,body,date&limit=5&sort=date&order=desc
-
-Pagination can be returned by adding `system:pagination` to the value of the `elements` list e.g.
-
-	/symphony/api/articles/?include=title,body,system:pagination
-
-### Querying a specific entry (GET)
-
-A known entry can be returned by passing the section handle and entry ID:
-
-	/symphony/api/:section/:entry_id
-
-### Filtering (GET)
-Presently filters are not supported.
-
-### Creating a new entry (POST)
-To create or update entries you can send an HTTP POST to the section URL:
-
-	/symphony/api/:section
-
-The format of the POST should follow exactly the field names for a normal event, i.e. `fields[title]`. Multiple entries can be created or updated by sending arrays of fields e.g. `fields[0][title]`, `fields[1][title]` which the API will detect automatically.
-
-### Updating an existing entry (POST)
-You can update an existing entry in one of two ways:
-
-a. As with normal Events, include an `id` variable in your POST containing the value of the entry ID to update and post to the section URL:
-		
-	/symphony/api/:section
-
-b. Omit the `id` variable from your POST variables itself and send your request to:
-
-	/symphony/api/:section/:entry_id
-
 ## Response formats
-By default the API returns XML but JSON, YAML and serialised PHP arrays are also supported by appending the `format` variable:
+By default the API returns XML but JSON, YAML and serialised PHP arrays are also supported by appending the `format` variable to any URL.
 
-	/symphony/api/articles/?format=xml
-	/symphony/api/articles/?format=json
-	/symphony/api/articles/?format=yaml
-	/symphony/api/articles/?format=serialise
+	/symphony/api/entries/articles/?format=xml
+	/symphony/api/entries/articles/?format=json
+	/symphony/api/entries/articles/?format=yaml
+	/symphony/api/entries/articles/?format=serialise
 
 ## Authentication and security
 
-By default the API is private. You authenticate in one of two ways:
+The API is private. You must authenticate as a Symphony author in one of two ways:
 
-a. By logging-in to Symphony and possessing an Author cookie in your browser.
+1. Log in to Symphony (obtain the cookie) and send that with your request
+2. Pass a `token` querystring value in the call to the API (either GET or POST). The token is the hash portion of your "remote login" URL for your user account. This only works when "allow remote login" is enabled.
 
-b. Pass a `token` value in the call to the API (either GET or POST). The token is the hash portion of your "remote login" URL for your user account. This only works when "allow remote login" is enabled. For example:
+An example token might look like this. It needs to be passed with every request.
 
-	/symphony/api/:section/?token=8ca221bb
+	/symphony/api/entries/articles/?token=8ca221bb
 
-If you "Enable public access" via System > Preferences you can choose which sections are viewable via the API without authentication.
+### Authors plugin
+
+Incomplete.
+
+### Sections plugin
+
+Incomplete.
+
+### Entries plugin
+
+The Entries plugin provides the same functionality of data sources (read entries) and events (create and update entries).
+
+To read entries from a section:
+
+	/symphony/api/entries/:section_handle
+
+To read a specific entry from a section:
+
+	/symphony/api/entries/:section_handle/:entry_id
+
+When reading entries from a section, querystring parameters can be added for finer control:
+
+* `fields` a comma-delimited list of field handles (XML element names) to include for each entry
+* `limit` the number of entries to return per page
+* `page` the page number, if pagination is being used
+* `sort` the field handle (XML element name) to sort by
+* `order` the sort direction (asc, desc, rand)
+* `groupby` the field handle (XML element name) to group by
+
+For example to get a list of the latest 5 entries from a section "Articles":
+
+	/symphony/api/entries/articles/?fields=title,body,date&limit=5&sort=date&order=desc
+
+Pagination can be returned by adding `system:pagination` to the value of the `fields` list e.g.
+
+	/symphony/api/entries/articles/?fields=title,body,system:pagination
+
+Additionally you can filter entries using data source filtering syntax. Use a `filters` array in the querystring:
+
+	/symphony/api/entries/articles/?filters[title]=regexp:Nick&filters[date]=later+than+today
+
+To create an entry you can send an HTTP POST to the section URL. The format of the POST should follow exactly the field names for a normal Symphony event, i.e. `fields[title]`. For example:
+	
+	/symphony/api/entries/:section_handle
+	
+	<form method="post" action="/symphony/api/entries/articles">
+		<input name="fields[title]" />
+		<textarea name="fields[content]"></textarea>
+		<input type="submit" />
+	</form>
+
+Multiple entries can be created by sending arrays of fields e.g. `fields[0][title]`, `fields[1][title]`, just as with a normal Symphony event.
+
+To update an existing entry, you have two options. Either include an `id` in the POST array and post it to the section handle, or omit the `id` and post to the entry URL directly. For example:
+
+	/symphony/api/entries/articles/31
+
+
+## Anatomy of an API plugin
+
+A plugin follows the following naming convention:
+
+	/extensions/rest_api/plugins/{name}/rest.{name}.php
+
+This file should contain a class named `REST_{Name}`.
+
+Each plugin class can implement four public methods. All are optional (but omitting all of them would lead to a pretty useless plugin...).
+
+### `init()`
+
+This is the first plugin function that is called on each request. It is used to build objects and do any initial work that may be required for the additional methods.
+
+### `authenticate()`
+
+If you need any custom authentication rules, put them here. Perhaps you want to limit your plugin access to a specific user account, or Developers only. You should restrict access by sending a 403:
+
+	REST_API::sendError("You are not permitted to view this plugin.", 403);
+
+This will terminate the response and send an error to the client.
+
+### `get()`
+
+This function is run when the client performs a GET request to your plugin. This is for read-only requests. You have full access to the `$_GET` or `$_REQUEST` data.
+
+### `post()`
+
+This function is run when the client performs a POST request to your plugin. This is for write operations. You have full access to the `$_GET` or `$_REQUEST` data.
+
+## Todo
+
+Here's a quick list of things that have yet to be implemented:
+
+* CSV export type (if there's a good library to convert an array into a CSV)
+* Author plugin
+* Section plugin no longer tries to use a field's `displayPublishPanel` as this is unstable for some extensions. Unfortunately this means it cannot return default values for fields (like the Section Schemas extension)

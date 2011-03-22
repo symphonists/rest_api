@@ -46,7 +46,7 @@ Class REST_Entries {
 
 		self::$_section_id = $section_id;
 		
-		self::setDatasourceParam('included_elements', $_REQUEST['include']);
+		self::setDatasourceParam('included_elements', $_REQUEST['fields']);
 		self::setDatasourceParam('limit', $_REQUEST['limit']);
 		self::setDatasourceParam('page', $_REQUEST['page']);
 		self::setDatasourceParam('sort', $_REQUEST['sort']);

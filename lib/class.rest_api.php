@@ -15,14 +15,14 @@ Class REST_API {
 		// log in user from cookie or by token passed if API is not already public
 		self::$auth_logged_in = Frontend::instance()->isLoggedIn();
 		
-		if (!self::$auth_logged_in && !self::isPublic()) {
+		if (!self::$auth_logged_in) {
 			self::$auth_logged_in = Frontend::instance()->loginFromToken(self::$_token);
 			// we are logging in as a user, be sure to log out session after request
 			$expire_login = TRUE;
 		}
 
 		// if private and no log in...
-		if (!self::isPublic() && !self::isLoggedIn()) self::sendError('API is private. Authentication failed.', 403);
+		if (!self::isLoggedIn()) self::sendError('API is private. Authentication failed.', 403);
 		
 		if ($expire_login) Frontend::instance()->logout();
 		
