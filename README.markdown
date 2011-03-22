@@ -67,6 +67,22 @@ To read a specific entry from a section:
 
 	/symphony/api/entries/:section_handle/:entry_id
 
+The default XML response looks like:
+
+	<response>
+		<pagination total-entries="3" total-pages="1" entries-per-page="10" current-page="1"/>
+		<section id="1" handle="articles">Articles</section>
+		<entry id="1">
+			...
+		</entry>
+		<entry id="2">
+			...
+		</entry>
+		<entry id="3">
+			...
+		</entry>
+	</response>
+
 When reading entries from a section, querystring parameters can be added for finer control:
 
 * `fields` a comma-delimited list of field handles (XML element names) to include for each entry
@@ -89,9 +105,7 @@ Additionally you can filter entries using data source filtering syntax. Use a `f
 	/symphony/api/entries/articles/?filters[title]=regexp:Nick&filters[date]=later+than+today
 
 To create an entry you can send an HTTP POST to the section URL. The format of the POST should follow exactly the field names for a normal Symphony event, i.e. `fields[title]`. For example:
-	
-	/symphony/api/entries/:section_handle
-	
+
 	<form method="post" action="/symphony/api/entries/articles">
 		<input name="fields[title]" />
 		<textarea name="fields[content]"></textarea>
