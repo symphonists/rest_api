@@ -4,7 +4,8 @@ Class REST_API {
 	
 	private static $_uri = NULL;
 	private static $_token = NULL;
-	private static $_output_type = NULL;	
+	private static $_output_type = NULL;
+	private static $_plugin_name = NULL;
 	private static $_plugin_class = NULL;
 	
 	public static $auth_logged_in = FALSE;
@@ -39,6 +40,7 @@ Class REST_API {
 		// get plugin name from the first segment in the URL
 		// and remove it from the URL segments list
 		$plugin_name = strtolower(self::$_uri[0]);
+		self::$_plugin_name = $plugin_name;
 		self::$_plugin_class = 'REST_' . ucfirst($plugin_name);
 		array_shift(self::$_uri);
 		
@@ -93,26 +95,80 @@ Class REST_API {
 		}
 		
 		switch(self::$_output_type) {
+			
 			case 'json':
 				header('Content-Type: text/plain; charset=utf-8');
-				require_once('class.xmltoarray.php');
-				$output = json_encode(XMLToArray::convert($response_body->generate()));
+				require_once('class.xmltoarray.php');				
+				$output = json_encode(XMLToArray::convert($response_body->generate()));				
 			break;
+			
 			case 'serialise':
 			case 'serialize':
 				header('Content-Type: text/plain; charset=utf-8');
 				require_once('class.xmltoarray.php');
 				$output = serialize(XMLToArray::convert($response_body->generate()));
-				break;
+			break;
+			
 			case 'yaml':
 				header('Content-Type: text/plain; charset=utf-8');
 				require_once('class.xmltoarray.php');
 				require_once('spyc-0.4.5/spyc.php');
 				$output = Spyc::YAMLDump(XMLToArray::convert($response_body->generate()));
-				break;
+			break;
+			
 		 	case 'xml':
 				header('Content-Type: text/xml; charset=utf-8');
 				$output = $response_body->generate(TRUE);
+			break;
+			
+			case 'csv':
+				header('Content-Type: text/plain; charset=utf-8');
+				
+				require_once('class.xmltoarray.php');
+				$entries = XMLToArray::convert($response_body->generate());
+				$entries = $entries['response']['entry'];
+				
+				$file_name = sprintf('%s/%s-%d.csv', TMP, self::$_plugin_name, time());
+				$csv = fopen($file_name, 'w');
+				
+				$columns = array();
+				$rows = array();
+				
+				// iterate over all entries to build columns. do not assume that the
+				// first entry has all fields (if a value is missing the field will not be present!)
+				foreach($entries as $entry) {
+					foreach($entry as $handle => $value) {
+						if(!in_array($handle, $columns)) $columns[] = $handle;
+					}
+				}
+				
+				fputcsv($csv, $columns, ',', '"');
+				
+				foreach($entries as $entry) {
+					$row = array();
+					// build the data for each field in this entry
+					foreach($columns as $column) {
+						// use a "value" column if it exists
+						if(isset($entry[$column]['value'])) {
+							$value = $entry[$column]['value'];
+						}
+						// file upload fields use the filename column
+						elseif(isset($entry[$column]['filename']['value'])) {
+							$value = $entry[$column]['filename']['value'];
+						}
+						// return nothing for empty or unsupported fields
+						else {
+							$value = '';
+						}
+						$row[$column] = $value;
+					}
+					fputcsv($csv, $row, ',', '"');
+				}
+				
+				fclose($csv);
+				$output = file_get_contents($file_name);
+				unlink($file_name);
+				
 			break;
 		}
 		

@@ -29,11 +29,12 @@ For example the root of the Authors API plugin is at:
 Details on how to create plugins is included later in this README.
 
 ## Response formats
-By default the API returns XML but JSON, YAML and serialised PHP arrays are also supported by appending the `format` variable to any URL.
+By default the API returns XML but JSON, YAML, CSV and serialised PHP arrays are also supported by appending the `format` variable to any URL.
 
 	/symphony/api/entries/articles/?format=xml
 	/symphony/api/entries/articles/?format=json
 	/symphony/api/entries/articles/?format=yaml
+	/symphony/api/entries/articles/?format=csv
 	/symphony/api/entries/articles/?format=serialise
 
 ## Authentication and security
