@@ -121,7 +121,7 @@ Class REST_API {
 				$output = $response_body->generate(TRUE);
 			break;
 			
-			case 'csv':
+			/*case 'csv':
 				header('Content-Type: text/plain; charset=utf-8');
 				
 				require_once('class.xmltoarray.php');
@@ -169,7 +169,7 @@ Class REST_API {
 				$output = file_get_contents($file_name);
 				unlink($file_name);
 				
-			break;
+			break;*/
 		}
 		
 		echo $output;
