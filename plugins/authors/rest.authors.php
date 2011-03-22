@@ -6,14 +6,12 @@ Class REST_Authors {
 			
 	public function run() {
 		
-		$url_parts = REST_API::getURI();
+		$url_parts = REST_API::getRequestURI();
 		
 		$section_url = $url_parts[0];
 		
 		$response = new XMLElement('response');
 		
-		// blah blah blah
-			
 		REST_API::sendResponse($response);		
 	}
 	

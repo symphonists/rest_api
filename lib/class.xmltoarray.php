@@ -67,5 +67,3 @@ Class XMLToArray {
 	}
 	
 }
-
-?>

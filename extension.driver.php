@@ -8,8 +8,9 @@
 			return array('name' => 'REST API',
 						 'version' => '0.1',
 						 'release-date' => '2009-07-27',
-						 'author' => array('name' => 'Nick Dunn',
-										   'website' => 'http://nick-dunn.co.uk')
+						 'author' => array(
+							'name' => 'Nick Dunn',
+							'website' => 'http://nick-dunn.co.uk')
 				 		);
 		}
 		
@@ -24,40 +25,34 @@
 						array(
 							'page' => '/system/preferences/',
 							'delegate' => 'Save',
-							'callback' => '__SavePreferences'
+							'callback' => 'savePreferences'
 						),
 					);
 		}
 		
 		public function uninstall(){
-			
 			$htaccess = @file_get_contents(DOCROOT . '/.htaccess');
-			
-			if($htaccess === false) return false;
+			if($htaccess === FALSE) return FALSE;
 			
 			$htaccess = self::__removeAPIRules($htaccess);
-			
 			return @file_put_contents(DOCROOT . '/.htaccess', $htaccess);
-			
 		}
 
 		public function install(){
-			
 			$htaccess = @file_get_contents(DOCROOT . '/.htaccess');
+			if($htaccess === FALSE) return FALSE;
 			
-			if($htaccess === false) return false;
+			$token = md5(time());
 			
-			## Find out if the rewrite base is another other than /
+			// Find out if the rewrite base is another other than /
 			$rewrite_base = NULL;
 			if(preg_match('/RewriteBase\s+([^\s]+)/i', $htaccess, $match)){
 				$rewrite_base = trim($match[1], '/') . '/';
 			}
 			
-			$token = md5(time());
-			
 			$rule = "
 	### START API RULES
-	RewriteRule ^symphony\/api(\/(.*\/?))?$ {$rewrite_base}extensions/rest_api/lib/handler.php?url={$token}&%{QUERY_STRING}	[NC,L]
+	RewriteRule ^symphony\/api(\/(.*\/?))?$ {$rewrite_base}extensions/rest_api/handler.php?url={$token}&%{QUERY_STRING}	[NC,L]
 	### END API RULES\n\n";
 			
 			$htaccess = self::__removeAPIRules($htaccess);
@@ -73,7 +68,7 @@
 			return preg_replace('/### START API RULES(.)+### END API RULES[\n]/is', NULL, $htaccess);
 		}
 		
-		public function __SavePreferences($context){
+		public function savePreferences($context){
 			
 			/*
 			if(!is_array($context['settings'])) {
@@ -110,12 +105,11 @@
 			
 			$label = Widget::Label();
 			$input = Widget::Input('settings[rest_api][public]', 'yes', 'checkbox');
-			if($this->_Parent->Configuration->get('public', 'rest_api') == 'yes') $input->setAttribute('checked', 'checked');
+			if(Symphony::Configuration()->get('public', 'rest_api') == 'yes') $input->setAttribute('checked', 'checked');
 			$label->setValue($input->generate() . ' Enable public access (bypass authentication)');
 			$group->appendChild($label);
-
 			
-			$public_sections = explode(',', $this->_Parent->Configuration->get('public_sections', 'rest_api'));
+			$public_sections = explode(',', Symphony::Configuration()->get('public_sections', 'rest_api'));
 			
 			$sm = new SectionManager(Administration::instance());
 			$sections = $sm->fetch();
@@ -128,7 +122,6 @@
 			$select = Widget::Select('settings[rest_api][public_sections][]', $options, array('multiple' => 'multiple', 'style' => 'width:300px;'));
 			$label->setValue('Public section access (only when public access is enabled) ' . $select->generate());
 			$group->appendChild($label);
-			
 								
 			$context['wrapper']->appendChild($group);
 			

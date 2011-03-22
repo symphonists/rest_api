@@ -2,12 +2,12 @@
 
 	require_once(TOOLKIT . '/class.event.php');
 	
-	Class Event_RESTEntries extends Event{
-		
+	Class Event_REST_API extends Event{
+
 		const ROOTELEMENT = 'response';
-		
+
 		public $eParamFILTERS = array();
-			
+
 		public static function about(){
 			return array(
 					 'name' => 'API',
@@ -21,25 +21,20 @@
 		}
 
 		public static function getSource(){
-			return Rest_Entries::getSource();
-		}
-
-		public static function allowEditorToParse(){
-			return false;
+			return REST_Entries::getSectionId();
 		}
 
 		public static function documentation(){
 			return '';
 		}
-		
+
 		public function load(){			
 			return $this->__trigger();
 		}
-		
+
 		protected function __trigger(){
 			include(TOOLKIT . '/events/event.section.php');
 			return $result;
 		}		
 
 	}
-
