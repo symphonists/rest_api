@@ -8,26 +8,9 @@ Class REST_API {
 	private static $_plugin_name = NULL;
 	private static $_plugin_class = NULL;
 	
-	public static $auth_logged_in = FALSE;
-	
 	private function __authenticate() {
-		$expire_login = FALSE;
-
-		// log in user from cookie or by token passed if API is not already public
-		self::$auth_logged_in = Frontend::instance()->isLoggedIn();
-		
-		if (!self::$auth_logged_in) {
-			self::$auth_logged_in = Frontend::instance()->loginFromToken(self::$_token);
-			// we are logging in as a user, be sure to log out session after request
-			$expire_login = TRUE;
-		}
-
-		// if private and no log in...
-		if (!self::isLoggedIn()) self::sendError('API is private. Authentication failed.', 403);
-		
-		if ($expire_login) Frontend::instance()->logout();
-		
-		return TRUE;
+		$logged_in = Frontend::instance()->isLoggedIn();
+		if (!$logged_in) self::sendError('API is private. Authentication failed.', 403);
 	}
 	
 	public function init() {
@@ -55,7 +38,7 @@ Class REST_API {
 		if(method_exists(self::$_plugin_class, 'init')) call_user_func(array(self::$_plugin_class, 'init'));
 		
 		// perform plugin authentication
-		// if(method_exists(self::$_plugin_class, 'authenticate')) call_user_func(array(self::$_plugin_class, 'authenticate'));
+		if(method_exists(self::$_plugin_class, 'authenticate')) call_user_func(array(self::$_plugin_class, 'authenticate'));
 		
 		// choose whether the plugin should respond to a POST or a GET request
 		if ($_POST) {
@@ -70,20 +53,6 @@ Class REST_API {
 	public function getRequestURI() {
 		return self::$_uri;
 	}
-	
-	public function isLoggedIn() {
-		return self::$auth_logged_in;
-	}
-	
-	/*public function isPublic() {
-		return (Frontend::instance()->Configuration->get('public', 'rest_api') == 'yes') ? TRUE : FALSE;
-	}
-	
-	/*public function getPublicSections() {
-		$sections = Symphony::Configuration()->get('public_sections', 'rest_api');
-		if(is_null($sections)) return array();
-		return explode(',', $sections);
-	}*/
 	
 	public function sendOutput($response_body=NULL, $code=200) {
 		

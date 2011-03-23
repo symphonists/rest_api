@@ -9,17 +9,6 @@ Class REST_Sections {
 	private static $_sections = NULL;
 	private static $_field_attributes = array('id', 'label', 'type', 'sortorder', 'location', 'show_column');
 	
-	/*public function authenticate() {
-		// public, but user not authenticated, check against section whitelist
-		if (
-			Frontend::instance()->Configuration->get('public', 'rest_api') == 'yes' &&
-			!Frontend::instance()->isLoggedIn() &&
-			!in_array(self::$section_handle, explode(',', Symphony::Configuration()->get('public_sections', 'rest_api')))
-		) {
-			REST_API::sendError(sprintf('No public access to the section "%s".', self::$section_handle), 403);
-		}
-	}*/
-	
 	public function init() {
 		
 		$request_uri = REST_API::getRequestURI();

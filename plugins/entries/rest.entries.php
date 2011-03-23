@@ -25,13 +25,6 @@ Class REST_Entries {
 		return self::$_section_id;
 	}
 	
-	/*public function authenticate() {
-		// API is public so check against section whitelist
-		if (REST_API::isPublic() && !in_array(self::$_section_handle, REST_API::getPublicSections())) {
-			REST_API::sendError(sprintf('No public access to the section "%s".', self::$_section_handle), 403);
-		}
-	}*/
-	
 	public function init() {
 		
 		$request_uri = REST_API::getRequestURI();
