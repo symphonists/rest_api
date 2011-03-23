@@ -41,11 +41,11 @@ By default the API returns XML but JSON, YAML and serialised PHP arrays are also
 The API is private. You must authenticate as a Symphony author in one of two ways:
 
 1. Log in to Symphony (obtain the cookie) and send that with your request
-2. Pass a `token` querystring value in the call to the API (either GET or POST). The token is the hash portion of your "remote login" URL for your user account. This only works when "allow remote login" is enabled.
+2. Pass a `auth-token` querystring value in the call to the API (either GET or POST). The token is the hash portion of your "remote login" URL for your user account. This only works when "allow remote login" is enabled.
 
 An example token might look like this. It needs to be passed with every request.
 
-	/symphony/api/entries/articles/?token=8ca221bb
+	/symphony/api/entries/articles/?auth-token=8ca221bb
 
 ### Authors plugin
 
