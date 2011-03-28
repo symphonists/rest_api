@@ -29,7 +29,6 @@
 		
 		public function manipulateResolvedPage($context) {
 			if(!class_exists('REST_API') || (class_exists('REST_API') && !REST_API::isFrontendPageRequest())) return;
-			die;
 			// get the page data from context
 			$page = $context['page_data'];
 
@@ -41,7 +40,6 @@
 		
 		public function frontendOutputPreGenerate($context) {
 			if(class_exists('REST_API') && class_exists('REST_Entries') && REST_API::isFrontendPageRequest()) {
-				die;
 				REST_Entries::sendOutput($context['xml']);
 			}
 		}
