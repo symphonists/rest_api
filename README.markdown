@@ -41,29 +41,57 @@ By default the API returns XML but JSON, YAML and serialised PHP arrays are also
 The API is private. You must authenticate as a Symphony author in one of two ways:
 
 1. Log in to Symphony (obtain the cookie) and send that with your request
-2. Pass a `auth-token` querystring value in the call to the API (either GET or POST). The token is the hash portion of your "remote login" URL for your user account. This only works when "allow remote login" is enabled.
+2. Pass a `auth-token` querystring value in the call to the API (either GET querystring or POST values). The token is the hash portion of your "remote login" URL for your user account. This only works when "allow remote login" is enabled.
 
 An example token might look like this. It needs to be passed with every request.
 
 	/symphony/api/entries/articles/?auth-token=8ca221bb
 
+I suggest sandboxing the API to a single user account. I usually create an "API" user in Symphony and use this author's token for all requests.
+
 ### Authors plugin
 
-Incomplete.
+The Authors plugin provides information about your Symphony authors (user accounts).
+
+To **list all authors**:
+
+	/symphony/api/authors
+
+To **read a specific author**, pass the author ID or username:
+
+	/symphony/api/authors/1
+	/symphony/api/authors/nickdunn
+
+Example XML response looks like:
+
+	<response>
+		<author>
+			<id>1</id>
+			<username>nickdunn</username>
+			<password>b94a8fe5cab12ba61c4c9973d391e987982fccd4</password>
+			<first-name>Nick</first-name>
+			<last-name>Dunn</last-name>
+			<email>nick@domain.com</email>
+			<last-seen>2011-03-28 07:45:14</last-seen>
+			<user-type>developer</user-type>
+			<primary>yes</primary>
+			<auth-token-active>yes</auth-token-active>
+		</author>
+	</response>
 
 ### Sections plugin
 
-Incomplete.
+Incomplete documentation. Eventually similar documentation to Section Schemas extension.
 
 ### Entries plugin
 
 The Entries plugin provides the same functionality of data sources (read entries) and events (create and update entries).
 
-To read entries from a section:
+To **list entries** from a section:
 
 	/symphony/api/entries/:section_handle
 
-To read a specific entry from a section:
+To **read a specific entry** from a section:
 
 	/symphony/api/entries/:section_handle/:entry_id
 
@@ -89,7 +117,7 @@ When reading entries from a section, querystring parameters can be added for fin
 * `limit` the number of entries to return per page
 * `page` the page number, if pagination is being used
 * `sort` the field handle (XML element name) to sort by
-* `order` the sort direction (asc, desc, rand)
+* `order` the sort direction (`asc`, `desc`, `rand`)
 * `groupby` the field handle (XML element name) to group by
 
 For example to get a list of the latest 5 entries from a section "Articles":
@@ -100,11 +128,11 @@ Pagination can be returned by adding `system:pagination` to the value of the `fi
 
 	/symphony/api/entries/articles/?fields=title,body,system:pagination
 
-Additionally you can filter entries using data source filtering syntax. Use a `filters` array in the querystring:
+Additionally you can **filter entries** using data source filtering syntax. Use a `filters` array in the querystring:
 
 	/symphony/api/entries/articles/?filters[title]=regexp:Nick&filters[date]=later+than+today
 
-To create an entry you can send an HTTP POST to the section URL. The format of the POST should follow exactly the field names for a normal Symphony event, i.e. `fields[title]`. For example:
+To **create an entry** you can send an HTTP POST to the section URL. The format of the POST should follow exactly the field names for a normal Symphony event, i.e. `fields[title]`. For example:
 
 	<form method="post" action="/symphony/api/entries/articles">
 		<input name="fields[title]" />
@@ -112,11 +140,40 @@ To create an entry you can send an HTTP POST to the section URL. The format of t
 		<input type="submit" />
 	</form>
 
+The XML result looks like:
+
+	<response id="..." result="success" type="created">
+		<message>Entry created successfully.</message>
+		<post-values>
+			<title>...</title>
+			<content>...</title>
+		</post-values>
+	</response>
+
 Multiple entries can be created by sending arrays of fields e.g. `fields[0][title]`, `fields[1][title]`, just as with a normal Symphony event.
 
-To update an existing entry, you have two options. Either include an `id` in the POST array and post it to the section handle, or omit the `id` and post to the entry URL directly. For example:
+To update an existing entry, you have two options. Either include an `id` in the POST array and post it to the section handle (as above), or omit the `id` and post to the entry URL directly. For example:
 
 	/symphony/api/entries/articles/31
+
+The XML response looks like:
+
+	<response id="31" result="success" type="edited">
+		<message>Entry edited successfully.</message>
+		<post-values>
+			...
+		</post-values>
+	</response>
+
+To **delete an entry** send an HTTP DELETE request to the entry's URL (the same URL as if reading the entry's data), such as:
+
+	curl -X DELETE /symphony/api/entries/articles/123
+
+The XML response looks like:
+
+	<response id="123" result="success" type="deleted">
+		<message>Entry deleted successfully.</message>
+	</response>
 
 
 ## Anatomy of an API plugin
@@ -127,7 +184,7 @@ A plugin follows the following naming convention:
 
 This file should contain a class named `REST_{Name}`.
 
-Each plugin class can implement four public methods. All are optional (but omitting all of them would lead to a pretty useless plugin...).
+Each plugin class can implement six public methods. All are optional (but omitting all of them would lead to a pretty useless plugin...).
 
 ### `init()`
 
@@ -141,13 +198,23 @@ If you need any custom authentication rules, put them here. Perhaps you want to 
 
 This will terminate the response and send an error to the client.
 
+The remaining four methods represent the four HTTP methods (GET, POST, PUT and DELETE). If the method is omitted from the plugin, an "unsupported" response will be returned to the client.
+
 ### `get()`
 
-This function is run when the client performs a GET request to your plugin. This is for read-only requests. You have full access to the `$_GET` or `$_REQUEST` data.
+This function is run when the client performs a GET request to your plugin. This is for read-only requests.
 
 ### `post()`
 
-This function is run when the client performs a POST request to your plugin. This is for write operations. You have full access to the `$_GET` or `$_REQUEST` data.
+This function is run when the client performs a POST request to your plugin. This is for write operations, to create a new or update existing resource.
+
+### `put()`
+
+This function is run when the client performs a PUT request to your plugin. This is for write operations, to create a new resource.
+
+### `delete()`
+
+This function is run when the client performs a DELETE request to your plugin. This is for write operations to delete a resource.
 
 ## Todo
 
