@@ -12,6 +12,40 @@
 				 		);
 		}
 		
+		public function getSubscribedDelegates() {
+			return array(
+				array(
+					'page'		=> '/frontend/',
+					'delegate'	=> 'FrontendPageResolved',
+					'callback'	=> 'manipulateResolvedPage'
+				),
+				array(
+					'page'		=> '/frontend/',
+					'delegate'	=> 'FrontendOutputPreGenerate',
+					'callback'	=> 'frontendOutputPreGenerate'
+				)
+			);
+		}
+		
+		public function manipulateResolvedPage($context) {
+			if(!class_exists('REST_API') || (class_exists('REST_API') && !REST_API::isFrontendPageRequest())) return;
+			die;
+			// get the page data from context
+			$page = $context['page_data'];
+
+			if(REST_API::getHTTPMethod() == 'get') $page['data_sources'] = 'rest_api_entries';
+			if(REST_API::getHTTPMethod() == 'post') $page['events'] = 'rest_api_entries';
+			
+			$context['page_data'] = $page;
+		}
+		
+		public function frontendOutputPreGenerate($context) {
+			if(class_exists('REST_API') && class_exists('REST_Entries') && REST_API::isFrontendPageRequest()) {
+				die;
+				REST_Entries::sendOutput($context['xml']);
+			}
+		}
+		
 		public function uninstall(){
 			$htaccess = @file_get_contents(DOCROOT . '/.htaccess');
 			if($htaccess === FALSE) return FALSE;

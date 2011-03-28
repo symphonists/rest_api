@@ -8,5 +8,4 @@ require_once(CORE . '/class.frontend.php');
 // include the extension core
 require_once(EXTENSIONS . '/rest_api/lib/class.rest_api.php');
 
-// fire up the API!
 REST_API::init();

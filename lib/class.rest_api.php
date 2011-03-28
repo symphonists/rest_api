@@ -2,6 +2,8 @@
 
 Class REST_API {
 	
+	private static $_is_frontend_page = FALSE;
+	
 	private static $_uri = NULL;
 	private static $_token = NULL;
 	private static $_output_type = NULL;
@@ -12,6 +14,11 @@ Class REST_API {
 	private function __authenticate() {
 		$logged_in = Frontend::instance()->isLoggedIn();
 		if (!$logged_in) self::sendError('API is private. Authentication failed.', 403);
+	}
+	
+	public function isFrontendPageRequest($is_frontend_page=NULL) {
+		if(isset($is_frontend_page)) self::$_is_frontend_page = $is_frontend_page;
+		return self::$_is_frontend_page;
 	}
 	
 	public function getOutputFormat() {
@@ -70,38 +77,42 @@ Class REST_API {
 			case 404: header('HTTP/1.0 404 Not Found'); break;
 		}
 		
+		$xml = $response_body;
+		if(is_array($xml)) $xml = reset($xml);
+		if($xml instanceOf XMLElement) $xml = $xml->generate(TRUE);
+		
 		switch(self::$_output_type) {
 			
 			case 'json':
 				header('Content-Type: text/plain; charset=utf-8');
 				require_once('class.xmltoarray.php');				
-				$output = json_encode(XMLToArray::convert($response_body->generate()));				
+				$output = json_encode(XMLToArray::convert($xml));				
 			break;
 			
 			case 'serialise':
 			case 'serialize':
 				header('Content-Type: text/plain; charset=utf-8');
 				require_once('class.xmltoarray.php');
-				$output = serialize(XMLToArray::convert($response_body->generate()));
+				$output = serialize(XMLToArray::convert($xml));
 			break;
 			
 			case 'yaml':
 				header('Content-Type: text/plain; charset=utf-8');
 				require_once('class.xmltoarray.php');
 				require_once('spyc-0.4.5/spyc.php');
-				$output = Spyc::YAMLDump(XMLToArray::convert($response_body->generate()));
+				$output = Spyc::YAMLDump(XMLToArray::convert($xml));
 			break;
 			
 		 	case 'xml':
 				header('Content-Type: text/xml; charset=utf-8');
-				$output = $response_body->generate(TRUE);
+				$output = $xml;
 			break;
 			
 			case 'csv':
 				header('Content-Type: text/plain; charset=utf-8');
 				
 				require_once('class.xmltoarray.php');
-				$entries = XMLToArray::convert($response_body->generate());
+				$entries = XMLToArray::convert($xml);
 				$entries = $entries['response']['entry'];
 				
 				$file_name = sprintf('%s/%s-%d.csv', TMP, self::$_plugin_name, time());
