@@ -4,8 +4,8 @@
 	
 		public function about(){
 			return array('name' => 'REST API',
-						 'version' => '1.0.0',
-						 'release-date' => '2011-03-22',
+						 'version' => '1.1.0',
+						 'release-date' => '2011-03-28',
 						 'author' => array(
 							'name' => 'Nick Dunn',
 							'website' => 'http://nick-dunn.co.uk')

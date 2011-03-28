@@ -1,8 +1,8 @@
 # REST API
 
-* Version: 1.0.0
+* Version: 1.1.0
 * Author: Nick Dunn <http://github.com/nickdunn/>
-* Build Date: 2011-03-22
+* Build Date: 2011-03-28
 * Requirements: Symphony 2.2
 
 ## Installation
