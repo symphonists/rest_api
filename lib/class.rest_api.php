@@ -41,12 +41,12 @@ Class REST_API {
 		if(method_exists(self::$_plugin_class, 'authenticate')) call_user_func(array(self::$_plugin_class, 'authenticate'));
 		
 		// choose whether the plugin should respond to a POST or a GET request
-		if ($_POST) {
-			if(method_exists(self::$_plugin_class, 'post')) call_user_func(array(self::$_plugin_class, 'post'));
-			else REST_API::sendError(sprintf("Plugin '%s' does not support POST.", self::$_plugin_class), 401);
+		$method = strtolower($_SERVER['REQUEST_METHOD']);
+		
+		if(method_exists(self::$_plugin_class, $method)) {
+			call_user_func(array(self::$_plugin_class, $method));
 		} else {
-			if(method_exists(self::$_plugin_class, 'get')) call_user_func(array(self::$_plugin_class, 'get'));
-			else REST_API::sendError(sprintf("Plugin '%s' does not support GET.", self::$_plugin_class), 401);
+			REST_API::sendError(sprintf("Plugin '%s' does not support HTTP %s.", self::$_plugin_class, strtoupper($method)), 401);
 		}
 	}
 	
@@ -145,8 +145,11 @@ Class REST_API {
 		exit;
 	}
 	
-	public function sendError($message=NULL, $code=NULL) {
-		$response = new XMLElement('response');
+	public function sendError($message=NULL, $code=200) {
+		$response = new XMLElement('response', NULL, array(
+			'result' => 'error',
+			'code' => $code
+		));
 		$response->appendChild(new XMLElement('error', $message));
 		self::sendOutput($response, $code);
 	}
