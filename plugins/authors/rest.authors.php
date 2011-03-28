@@ -3,7 +3,13 @@
 require_once(TOOLKIT . '/class.authormanager.php');
 
 Class REST_Authors {
-			
+	
+	public function init() {
+		if(REST_API::getOutputFormat() == 'csv') {
+			REST_API::sendError(sprintf('%s output format not supported.', strtoupper(REST_API::getOutputFormat())), 401, 'xml');
+		}
+	}
+	
 	public function get() {
 		
 		$url_parts = REST_API::getRequestURI();

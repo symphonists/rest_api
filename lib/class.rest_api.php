@@ -5,6 +5,7 @@ Class REST_API {
 	private static $_uri = NULL;
 	private static $_token = NULL;
 	private static $_output_type = NULL;
+	private static $_http_method = NULL;
 	private static $_plugin_name = NULL;
 	private static $_plugin_class = NULL;
 	
@@ -13,12 +14,21 @@ Class REST_API {
 		if (!$logged_in) self::sendError('API is private. Authentication failed.', 403);
 	}
 	
+	public function getOutputFormat() {
+		return self::$_output_type;
+	}
+	
+	public function getHTTPMethod() {
+		return self::$_http_method;
+	}
+	
 	public function init() {
 		
 		// store request parameters for later
-		self::$_token = trim($_REQUEST['token']);		
-		self::$_output_type = (isset($_REQUEST['format']) ? $_REQUEST['format'] : 'xml');
+		self::$_token = trim($_REQUEST['token']);
+		self::$_output_type = (isset($_REQUEST['format']) ? $_REQUEST['format'] : 'xml');		
 		self::$_uri = explode('/', trim($_REQUEST['url'], '/'));
+		self::$_http_method = strtolower($_SERVER['REQUEST_METHOD']);
 		
 		// get plugin name from the first segment in the URL
 		// and remove it from the URL segments list
@@ -40,11 +50,8 @@ Class REST_API {
 		// perform plugin authentication
 		if(method_exists(self::$_plugin_class, 'authenticate')) call_user_func(array(self::$_plugin_class, 'authenticate'));
 		
-		// choose whether the plugin should respond to a POST or a GET request
-		$method = strtolower($_SERVER['REQUEST_METHOD']);
-		
-		if(method_exists(self::$_plugin_class, $method)) {
-			call_user_func(array(self::$_plugin_class, $method));
+		if(method_exists(self::$_plugin_class, self::$_http_method)) {
+			call_user_func(array(self::$_plugin_class, self::$_http_method));
 		} else {
 			REST_API::sendError(sprintf("Plugin '%s' does not support HTTP %s.", self::$_plugin_class, strtoupper($method)), 401);
 		}
@@ -90,7 +97,7 @@ Class REST_API {
 				$output = $response_body->generate(TRUE);
 			break;
 			
-			/*case 'csv':
+			case 'csv':
 				header('Content-Type: text/plain; charset=utf-8');
 				
 				require_once('class.xmltoarray.php');
@@ -138,14 +145,15 @@ Class REST_API {
 				$output = file_get_contents($file_name);
 				unlink($file_name);
 				
-			break;*/
+			break;
 		}
 		
 		echo $output;
 		exit;
 	}
 	
-	public function sendError($message=NULL, $code=200) {
+	public function sendError($message=NULL, $code=200, $format=NULL) {
+		if($format) self::$_output_type = $format;
 		$response = new XMLElement('response', NULL, array(
 			'result' => 'error',
 			'code' => $code

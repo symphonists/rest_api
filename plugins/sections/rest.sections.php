@@ -11,6 +11,10 @@ Class REST_Sections {
 	
 	public function init() {
 		
+		if(REST_API::getOutputFormat() == 'csv') {
+			REST_API::sendError(sprintf('%s output format not supported.', strtoupper(REST_API::getOutputFormat())), 401, 'xml');
+		}
+		
 		$request_uri = REST_API::getRequestURI();
 		$sm = new SectionManager(Frontend::instance());
 		

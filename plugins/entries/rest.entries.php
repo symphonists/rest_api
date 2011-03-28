@@ -28,6 +28,14 @@ Class REST_Entries {
 	
 	public function init() {
 		
+		if(REST_API::getOutputFormat() == 'csv' && !REST_API::getHTTPMethod() == 'get') {
+			REST_API::sendError(sprintf(
+				'%s output format not supported for %s requests.',
+				strtoupper(REST_API::getOutputFormat()),
+				strtoupper(REST_API::getHTTPMethod())
+			), 401, 'xml');
+		}
+		
 		$request_uri = REST_API::getRequestURI();
 		
 		self::$_section_handle = $request_uri[0];
