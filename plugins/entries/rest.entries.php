@@ -1,5 +1,6 @@
 <?php
 
+require_once(TOOLKIT . '/class.entrymanager.php');
 require_once(TOOLKIT . '/class.sectionmanager.php');
 require_once(TOOLKIT . '/class.fieldmanager.php');
 
@@ -50,6 +51,26 @@ Class REST_Entries {
 		if (!is_null($filters) && !is_array($filters)) $filters = array($filters);
 		self::setDatasourceParam('filters', $filters);
 		
+	}
+	
+	public function delete() {
+
+		$em = new EntryManager(Frontend::instance());
+		$entry = $em->fetch(self::$_entry_id);
+		
+		if(!$entry) {
+			REST_API::sendError('Entry not found.', 404);
+		} else {
+			$em->delete(self::$_entry_id);
+			$response = new XMLElement('response', NULL, array(
+				'id' => self::$_entry_id,
+				'result' => 'success',
+				'type' => 'deleted'
+			));
+			$response->appendChild(new XMLElement('message', 'Entry deleted successfully.'));
+			REST_API::sendOutput($response);
+		}
+
 	}
 		
 	public function post() {
