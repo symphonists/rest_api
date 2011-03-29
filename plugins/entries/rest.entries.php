@@ -129,12 +129,12 @@ Class REST_Entries {
 		if (!is_null(self::getDatasourceParam('sort'))) $ds->dsParamSORT = self::getDatasourceParam('sort');
 		if (!is_null(self::getDatasourceParam('order'))) $ds->dsParamORDER = self::getDatasourceParam('order');
 		
-		if (!is_null(self::getDatasourceParam('group_by'))) {
+		if (!is_null(self::getDatasourceParam('groupby'))) {
 			$field = end(Frontend::instance()->Database->fetch(
 				sprintf(
 					"SELECT id FROM `tbl_fields` WHERE `parent_section` = %d AND `element_name` = '%s'",
 					Frontend::instance()->Database->cleanValue(self::$_section_id),
-					Frontend::instance()->Database->cleanValue(self::getDatasourceParam('group_by'))
+					Frontend::instance()->Database->cleanValue(self::getDatasourceParam('groupby'))
 				)
 			));
 			if ($field) $ds->dsParamGROUP = $field['id'];
