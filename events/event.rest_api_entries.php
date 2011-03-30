@@ -2,7 +2,7 @@
 
 	require_once(TOOLKIT . '/class.event.php');
 	
-	Class Event_REST_API extends Event{
+	Class EventREST_API_Entries extends Event{
 
 		const ROOTELEMENT = 'response';
 
@@ -10,7 +10,7 @@
 
 		public static function about(){
 			return array(
-					 'name' => 'API',
+					 'name' => 'REST API: Entries',
 					 'author' => array(
 							'name' => 'Nick Dunn',
 							'website' => 'http://symphony-demo',
@@ -33,6 +33,13 @@
 		}
 
 		protected function __trigger(){
+			
+			if (is_array($_POST['fields'][0])) {
+				$this->eParamFILTERS = array('expect-multiple');
+			} elseif (!is_null(REST_Entries::getEntryId())) {
+				$_POST['id'] = REST_Entries::getEntryId();
+			}
+			
 			include(TOOLKIT . '/events/event.section.php');
 			return $result;
 		}		

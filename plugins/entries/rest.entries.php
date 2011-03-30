@@ -4,9 +4,6 @@ require_once(TOOLKIT . '/class.entrymanager.php');
 require_once(TOOLKIT . '/class.sectionmanager.php');
 require_once(TOOLKIT . '/class.fieldmanager.php');
 
-require_once(EXTENSIONS . '/rest_api/plugins/entries/class.datasource_rest_api.php');
-require_once(EXTENSIONS . '/rest_api/plugins/entries/class.event_rest_api.php');
-
 Class REST_Entries {
 		
 	private static $_section_handle = NULL;
@@ -14,16 +11,24 @@ Class REST_Entries {
 	private static $_entry_id = NULL;
 	private static $_ds_params = array();
 	
-	private function setDatasourceParam($name, $value) {
+	public function setDatasourceParam($name, $value) {
 		self::$_ds_params[$name] = $value;
 	}
 	
-	private function getDatasourceParam($name) {
+	public function getDatasourceParam($name) {
 		return self::$_ds_params[$name];
 	}
 	
 	public function getSectionId() {
 		return self::$_section_id;
+	}
+	
+	public function getSectionHandle() {
+		return self::$_section_handle;
+	}
+	
+	public function getEntryId() {
+		return self::$_entry_id;
 	}
 	
 	public function init() {
@@ -80,95 +85,37 @@ Class REST_Entries {
 		}
 
 	}
-		
+	
+	/*
+	GET and POST instantiate a frontend page. This resolved to the "index" page of your site
+	then replaces the page data sources/events with the REST API ones, and lets the page load
+	Page delegates fire up to and including FrontendOutputPreGenerate, but _not_ any after, since
+	the page does not fully load — we return the API response before the page XSLT transformation occurs
+	*/
 	public function post() {
-
-		$event = new Event_REST_API(Frontend::instance(), array());
-		
-		if (is_array($_POST['fields'][0])) {
-			$event->eParamFILTERS = array('expect-multiple');
-		} elseif (!is_null(self::$_entry_id)) {
-			$_POST['id'] = self::$_entry_id;
-		}
-		
-		REST_API::sendOutput($event->load());
+		REST_API::isFrontendPageRequest(TRUE);
+		Frontend::instance()->display(NULL);
 	}
 	
 	public function get() {
-		
-		// instantiate the "REST API" datasource
-		$ds = new Datasource_REST_API(Frontend::instance(), array(), FALSE);
-
-		// remove placeholder elements
-		unset($ds->dsParamINCLUDEDELEMENTS);
-
-		// fill with all included elements if none are set
-		if (is_null(self::getDatasourceParam('included_elements'))) {
-			// get all fields in this section
-			$fields = Frontend::instance()->Database->fetch(
-				sprintf(
-					"SELECT element_name FROM `tbl_fields` WHERE `parent_section` = %d",
-					Frontend::instance()->Database->cleanValue(self::$_section_id)
-				)
-			);
-			// add them to the data source
-			foreach($fields as $field) {
-				$ds->dsParamINCLUDEDELEMENTS[] = $field['element_name'];
-			}
-			// also add pagination
-			$ds->dsParamINCLUDEDELEMENTS[] = 'system:pagination';
+		REST_API::isFrontendPageRequest(TRUE);
+		Frontend::instance()->display(NULL);
+	}
+	
+	public function sendOutput($xml) {
+		$dom = simplexml_load_string($xml);
+		switch(REST_API::getHTTPMethod()) {
+			case 'get':
+				$xml = $dom->xpath('/data/response');
+				if(is_array($xml)) $xml = reset($xml);
+				REST_API::sendOutput($xml->asXML());
+			break;
+			case 'post':
+				$xml = $dom->xpath('/data/events/response');
+				if(is_array($xml)) $xml = reset($xml);
+				REST_API::sendOutput($xml->asXML());
+			break;
 		}
-		// if included elements are spcified, use them only
-		else {
-			$ds->dsParamINCLUDEDELEMENTS = explode(',', self::getDatasourceParam('included_elements'));
-		}
-
-		// fill the other parameters
-		if (!is_null(self::getDatasourceParam('limit'))) $ds->dsParamLIMIT = self::getDatasourceParam('limit');
-		if (!is_null(self::getDatasourceParam('page'))) $ds->dsParamSTARTPAGE = self::getDatasourceParam('page');
-		if (!is_null(self::getDatasourceParam('sort'))) $ds->dsParamSORT = self::getDatasourceParam('sort');
-		if (!is_null(self::getDatasourceParam('order'))) $ds->dsParamORDER = self::getDatasourceParam('order');
-		
-		if (!is_null(self::getDatasourceParam('groupby'))) {
-			$field = end(Frontend::instance()->Database->fetch(
-				sprintf(
-					"SELECT id FROM `tbl_fields` WHERE `parent_section` = %d AND `element_name` = '%s'",
-					Frontend::instance()->Database->cleanValue(self::$_section_id),
-					Frontend::instance()->Database->cleanValue(self::getDatasourceParam('groupby'))
-				)
-			));
-			if ($field) $ds->dsParamGROUP = $field['id'];
-		}
-		
-		// if API is calling a known entry, filter on System ID only
-		if (!is_null(self::$_entry_id)) {
-			$ds->dsParamFILTERS['id'] = self::$_entry_id;
-		}
-		// otherwise use filters
-		elseif (self::getDatasourceParam('filters')) {
-			
-			$fm = new FieldManager(Frontend::instance());
-			
-			foreach(self::getDatasourceParam('filters') as $field_handle => $filter_value) {
-				$filter_value = rawurldecode($filter_value);
-				$field_id = Frontend::instance()->Database->fetchVar('id', 0, 
-					sprintf(
-						"SELECT `f`.`id` 
-						FROM `tbl_fields` AS `f`, `tbl_sections` AS `s` 
-						WHERE `s`.`id` = `f`.`parent_section` 
-						AND f.`element_name` = '%s' 
-						AND `s`.`handle` = '%s' LIMIT 1",
-						Frontend::instance()->Database->cleanValue($field_handle),
-						Frontend::instance()->Database->cleanValue(self::$_section_handle)
-					)
-				);
-				if(is_numeric($field_id)) $ds->dsParamFILTERS[$field_id] = $filter_value;
-			}
-			
-		}
-
-		$params = array();
-		REST_API::sendOutput($ds->grab($params));
 	}
 	
 }
