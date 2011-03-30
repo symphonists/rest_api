@@ -128,9 +128,9 @@ Pagination can be returned by adding `system:pagination` to the value of the `fi
 
 	/symphony/api/entries/articles/?fields=title,body,system:pagination
 
-Additionally you can **filter entries** using data source filtering syntax. Use a `filters` array in the querystring:
+Additionally you can **filter entries** using data source filtering syntax. Use a `filter` array in the querystring:
 
-	/symphony/api/entries/articles/?filters[title]=regexp:Nick&filters[date]=later+than+today
+	/symphony/api/entries/articles/?filter[title]=regexp:Nick&filter[date]=later+than+today
 
 To **create an entry** you can send an HTTP POST to the section URL. The format of the POST should follow exactly the field names for a normal Symphony event, i.e. `fields[title]`. For example:
 
