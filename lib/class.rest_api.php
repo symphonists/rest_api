@@ -45,7 +45,7 @@ Class REST_API {
 		array_shift(self::$_uri);
 		
 		// include the plugin!
-		include(EXTENSIONS . "/rest_api/plugins/$plugin_name/rest.$plugin_name.php");
+		@include(EXTENSIONS . "/rest_api/plugins/$plugin_name/rest.$plugin_name.php");
 		if (!class_exists(self::$_plugin_class)) REST_API::sendError(sprintf("Plugin '%s' does not exist.", self::$_plugin_class), 404);
 		
 		// perform global API authentication
