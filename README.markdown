@@ -215,11 +215,3 @@ This function is run when the client performs a PUT request to your plugin. This
 ### `delete()`
 
 This function is run when the client performs a DELETE request to your plugin. This is for write operations to delete a resource.
-
-## Todo
-
-Here's a quick list of things that have yet to be implemented:
-
-* Section plugin no longer tries to use a field's `displayPublishPanel` as this is unstable for some extensions. Unfortunately this means it cannot return default values for fields (like the Section Schemas extension)
-* add maximum values for GET parameters to prevent malicious overloading (`limit`, `include` etc.)
-* caching. Perhaps simplest to use HTTP caching and respect 304 Not Modified requests somehow
