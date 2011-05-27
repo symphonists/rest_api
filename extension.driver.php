@@ -53,28 +53,21 @@
 		}
 
 		public function install(){
+			
 			$htaccess = @file_get_contents(DOCROOT . '/.htaccess');
 			if($htaccess === FALSE) return FALSE;
-			
 			$token = md5(time());
-			
-			// Find out if the rewrite base is another other than /
-			$rewrite_base = NULL;
-			if(preg_match('/RewriteBase\s+([^\s]+)/i', $htaccess, $match)){
-				$rewrite_base = trim($match[1], '/') . '/';
-			}
 			
 			$rule = "
 	### START API RULES
-	RewriteRule ^symphony\/api(\/(.*\/?))?$ {$rewrite_base}extensions/rest_api/handler.php?url={$token}&%{QUERY_STRING}	[NC,L]
+	RewriteRule ^symphony\/api(\/(.*\/?))?$ extensions/rest_api/handler.php?url={$token}&%{QUERY_STRING}	[NC,L]
 	### END API RULES\n\n";
 			
 			$htaccess = self::__removeAPIRules($htaccess);
-			
 			$htaccess = preg_replace('/RewriteRule .\* - \[S=14\]\s*/i', "RewriteRule .* - [S=14]\n{$rule}\t", $htaccess);
 			$htaccess = str_replace($token, '$1', $htaccess);
 			
-			return @file_put_contents(DOCROOT . '/.htaccess', $htaccess);
+			return file_put_contents(DOCROOT . '/.htaccess', $htaccess);
 			
 		}
 		
