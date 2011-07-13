@@ -1,0 +1,42 @@
+<?php
+
+	Class Request_REST_API extends ShellCommand{
+		
+		private $_args = NULL;
+		
+		public function run(array $args=NULL){
+			$this->_args = $args;
+			
+			if(!Shell::instance()->isLoggedIn()){
+				throw new Exception('Valid authentication token must be supplied.');
+			}
+
+			if(!Shell::instance()->Author->isDeveloper()){
+				throw new Exception('Only developers can enable maintenance mode');
+			}			
+
+			require_once(CORE . '/class.frontend.php');
+			// include the extension core
+			require_once(EXTENSIONS . '/rest_api/lib/class.rest_api.php');
+			
+			$_REQUEST['token'] = Shell::instance()->Author->createAuthToken();
+			$_REQUEST['url'] = $this->get_argument('path', '/');
+			$_REQUEST['format'] = strtolower($this->get_argument('format', 'xml'));
+			$_SERVER['REQUEST_METHOD'] = strtolower($this->get_argument('method', 'GET'));
+			
+			REST_API::init();
+			
+		}
+		
+		private function get_argument($name, $default) {
+			foreach($this->_args as $i=> $args) {
+				if($args == ('-' . $name)) {
+					return $this->_args[$i + 1];
+				}
+			}
+			return $default;
+		}
+		
+	}
+
+	return 'Request_REST_API';
