@@ -215,3 +215,21 @@ This function is run when the client performs a PUT request to your plugin. This
 ### `delete()`
 
 This function is run when the client performs a DELETE request to your plugin. This is for write operations to delete a resource.
+
+## Shell access
+
+If you use the [Symphony Shell extension](https://github.com/pointybeard/shell) you can access the REST API on the command line. It's no longer using HTTP, but access is the same. An HTTP request that previously looked like:
+
+	/symphony/api/entries/articles/2/?format=json&method=get
+	
+Maps on to the following Shell command:
+
+	php symphony -t {token} rest_api request -path entries/articles/2 -format json -method get
+
+An explanation of the above:
+
+* `php symphony -t {token}` is saying use `php` to instantiate the `symphony` script, passing `{token}` (replace this with an Author access token)
+* `rest_api request` is saying use the `request` script from the `rest_api` extension
+* `-path the/path/here` passes the REST URL as if you were using the REST API via HTTP
+* `-format json` is the equivalent of `?format=json`
+* `-method get` is the equivalent of an HTTP GET
