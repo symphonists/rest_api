@@ -1,10 +1,5 @@
 # REST API
 
-* Version: 1.1.0
-* Author: Nick Dunn <http://github.com/nickdunn/>
-* Build Date: 2011-03-28
-* Requirements: Symphony 2.2
-
 ## Installation
 
 1. Download the `rest_api` extension and add it to your extensions folder
