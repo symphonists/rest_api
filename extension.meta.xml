@@ -2,7 +2,7 @@
 <extension id="rest_api">
 	<name>REST API</name>
 	<description>A read/write RESTful API on top of Symphony authors, sections and entry content. Supports XML, JSON, YAML, serialised PHP and CSV output.</description>
-	<url type="repo">https://github.com/nickdunn/rest_api</url>
+	<repo type="github">https://github.com/nickdunn/rest_api</repo>
 	<url type="discuss">http://symphony-cms.com/discuss/thread/65084/</url>
 	<types>
 		<type>Other</type>
