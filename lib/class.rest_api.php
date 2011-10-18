@@ -1,5 +1,7 @@
 <?php
 
+if(!class_exists('XMLToArray')) require_once('class.xmltoarray.php');
+
 Class REST_API {
 	
 	private static $_is_frontend_page = FALSE;
@@ -85,20 +87,17 @@ Class REST_API {
 			
 			case 'json':
 				header('Content-Type: text/plain; charset=utf-8');
-				require_once('class.xmltoarray.php');				
 				$output = json_encode(XMLToArray::convert($xml));				
 			break;
 			
 			case 'serialise':
 			case 'serialize':
 				header('Content-Type: text/plain; charset=utf-8');
-				require_once('class.xmltoarray.php');
 				$output = serialize(XMLToArray::convert($xml));
 			break;
 			
 			case 'yaml':
 				header('Content-Type: text/plain; charset=utf-8');
-				require_once('class.xmltoarray.php');
 				require_once('spyc-0.4.5/spyc.php');
 				$output = Spyc::YAMLDump(XMLToArray::convert($xml));
 			break;
@@ -111,7 +110,6 @@ Class REST_API {
 			case 'csv':
 				header('Content-Type: text/plain; charset=utf-8');
 				
-				require_once('class.xmltoarray.php');
 				$entries = XMLToArray::convert($xml);
 				$entries = $entries['response']['entry'];
 				
