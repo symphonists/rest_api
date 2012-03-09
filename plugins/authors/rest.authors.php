@@ -17,18 +17,16 @@ Class REST_Authors {
 
 		$response = new XMLElement('response');
 
-		$am = new AuthorManager(Frontend::instance());
-
 		if (isset($author_url)) {
 			if (is_numeric($author_url)) {
-				$author = $am->fetchByID($author_url);	
+				$author = AuthorManager::fetchByID($author_url);	
 			} else {
-				$author = $am->fetchByUsername($author_url);
+				$author = AuthorManager::fetchByUsername($author_url);
 			}
 			if(!$author) REST_API::sendError('Author not found.', 404);
 			$response->appendChild(self::__buildAuthorXML($author));
 		} else {
-			$authors = $am->fetch();
+			$authors = AuthorManager::fetch();
 			foreach($authors as $author){
 				$response->appendChild(self::__buildAuthorXML($author));
 			}

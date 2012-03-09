@@ -14,11 +14,6 @@
 		public $dsParamINCLUDEDELEMENTS = array('system:id');
 		public $dsParamFILTERS = array();
 
-		public function __construct(&$parent, $env=NULL, $process_params=true){
-			parent::__construct($parent, $env, $process_params);
-			$this->_dependencies = array();
-		}
-
 		public function about(){
 			return array(
 					 'name' => 'REST API: Entries',
@@ -43,10 +38,10 @@
 			// fill with all included elements if none are set
 			if (is_null(REST_Entries::getDatasourceParam('included_elements'))) {
 				// get all fields in this section
-				$fields = Frontend::instance()->Database->fetch(
+				$fields = Symphony::Database()->fetch(
 					sprintf(
 						"SELECT element_name FROM `tbl_fields` WHERE `parent_section` = %d",
-						Frontend::instance()->Database->cleanValue(REST_Entries::getSectionId())
+						Symphony::Database()->cleanValue(REST_Entries::getSectionId())
 					)
 				);
 				// add them to the data source
@@ -68,11 +63,11 @@
 			if (!is_null(REST_Entries::getDatasourceParam('order'))) $this->dsParamORDER = REST_Entries::getDatasourceParam('order');
 
 			if (!is_null(REST_Entries::getDatasourceParam('group_by'))) {
-				$field = end(Frontend::instance()->Database->fetch(
+				$field = end(Symphony::Database()->fetch(
 					sprintf(
 						"SELECT id FROM `tbl_fields` WHERE `parent_section` = %d AND `element_name` = '%s'",
-						Frontend::instance()->Database->cleanValue(REST_Entries::getSectionId()),
-						Frontend::instance()->Database->cleanValue(REST_Entries::getDatasourceParam('group_by'))
+						Symphony::Database()->cleanValue(REST_Entries::getSectionId()),
+						Symphony::Database()->cleanValue(REST_Entries::getDatasourceParam('group_by'))
 					)
 				));
 				if ($field) $this->dsParamGROUP = $field['id'];
@@ -85,19 +80,17 @@
 			// otherwise use filters
 			elseif (REST_Entries::getDatasourceParam('filters')) {
 
-				$fm = new FieldManager(Frontend::instance());
-
 				foreach(REST_Entries::getDatasourceParam('filters') as $field_handle => $filter_value) {
 					$filter_value = rawurldecode($filter_value);
-					$field_id = Frontend::instance()->Database->fetchVar('id', 0, 
+					$field_id = Symphony::Database()->fetchVar('id', 0, 
 						sprintf(
 							"SELECT `f`.`id` 
 							FROM `tbl_fields` AS `f`, `tbl_sections` AS `s` 
 							WHERE `s`.`id` = `f`.`parent_section` 
 							AND f.`element_name` = '%s' 
 							AND `s`.`handle` = '%s' LIMIT 1",
-							Frontend::instance()->Database->cleanValue($field_handle),
-							Frontend::instance()->Database->cleanValue(REST_Entries::getSectionHandle())
+							Symphony::Database()->cleanValue($field_handle),
+							Symphony::Database()->cleanValue(REST_Entries::getSectionHandle())
 						)
 					);
 					if(is_numeric($field_id)) $this->dsParamFILTERS[$field_id] = $filter_value;

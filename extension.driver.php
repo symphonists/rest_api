@@ -1,16 +1,6 @@
 <?php
 	
 	Class extension_rest_api extends Extension{
-	
-		public function about(){
-			return array('name' => 'REST API',
-						 'version' => '1.1.0',
-						 'release-date' => '2011-03-28',
-						 'author' => array(
-							'name' => 'Nick Dunn',
-							'website' => 'http://nick-dunn.co.uk')
-				 		);
-		}
 		
 		public function getSubscribedDelegates() {
 			return array(
@@ -74,6 +64,5 @@
 		private static function __removeAPIRules($htaccess){
 			return preg_replace('/### START API RULES(.)+### END API RULES[\n]/is', NULL, $htaccess);
 		}
-		
-			
+				
 	}

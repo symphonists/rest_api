@@ -46,8 +46,7 @@ Class REST_Entries {
 		self::$_section_handle = $request_uri[0];
 		self::$_entry_id = $request_uri[1];
 		
-		$sm = new SectionManager(Frontend::instance());
-		$section_id = $sm->fetchIDFromHandle(self::$_section_handle);
+		$section_id = SectionManager::fetchIDFromHandle(self::$_section_handle);
 		
 		if (!$section_id) REST_API::sendError('Section not found.', 404);
 
@@ -68,13 +67,12 @@ Class REST_Entries {
 	
 	public function delete() {
 
-		$em = new EntryManager(Frontend::instance());
-		$entry = $em->fetch(self::$_entry_id);
+		$entry = EntryManager::fetch(self::$_entry_id);
 		
 		if(!$entry) {
 			REST_API::sendError('Entry not found.', 404);
 		} else {
-			$em->delete(self::$_entry_id);
+			EntryManager::delete(self::$_entry_id);
 			$response = new XMLElement('response', NULL, array(
 				'id' => self::$_entry_id,
 				'result' => 'success',

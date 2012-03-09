@@ -16,18 +16,17 @@ Class REST_Sections {
 		}
 		
 		$request_uri = REST_API::getRequestURI();
-		$sm = new SectionManager(Frontend::instance());
 		
 		$section_reference = $request_uri[0];
 		$sections = NULL;
 		
 		if(is_null($section_reference)) {
-			$sections = $sm->fetch();
+			$sections = SectionManager::fetch();
 		} elseif(is_numeric($section_reference)) {
-			$sections = $sm->fetch($section_reference);
+			$sections = SectionManager::fetch($section_reference);
 		} else {
-			$section_id = $sm->fetchIDFromHandle($section_reference);
-			if($section_id) $sections = $sm->fetch($section_id);
+			$section_id = SectionManager::fetchIDFromHandle($section_reference);
+			if($section_id) $sections = SectionManager::fetch($section_id);
 		}
 		
 		if(!is_array($sections)) $sections = array($sections);
