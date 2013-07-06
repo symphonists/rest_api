@@ -2,12 +2,15 @@
 <extension id="rest_api" status="released" xmlns="http://symphony-cms.com/schemas/extension/1.0">
 	<name>REST API</name>
 	<description>A read/write RESTful API on top of Symphony authors, sections and entry content. Supports XML, JSON, YAML, serialised PHP and CSV output.</description>
-	<repo type="github">https://github.com/nickdunn/rest_api</repo>
+	<repo type="github">https://github.com/symphonists/rest_api</repo>
 	<url type="discuss">http://symphony-cms.com/discuss/thread/65084/</url>
 	<types>
 		<type>Other</type>
 	</types>
 	<authors>
+		<author>
+          		<name github="symphonists" symphony="community">Symphony Community</name>
+    		</author>
 		<author>
 			<name github="nickdunn" symphony="nickdunn">Nick Dunn</name>
 			<website>http://nick-dunn.co.uk</website>
