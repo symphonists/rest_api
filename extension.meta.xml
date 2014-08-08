@@ -1,23 +1,28 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<extension id="rest_api" status="released" xmlns="http://symphony-cms.com/schemas/extension/1.0">
+<extension id="rest_api" status="released" xmlns="http://getsymphony.com/schemas/extension/1.0">
 	<name>REST API</name>
 	<description>A read/write RESTful API on top of Symphony authors, sections and entry content. Supports XML, JSON, YAML, serialised PHP and CSV output.</description>
 	<repo type="github">https://github.com/symphonists/rest_api</repo>
-	<url type="discuss">http://symphony-cms.com/discuss/thread/65084/</url>
+	<url type="discuss">http://getsymphony.com/discuss/thread/65084/</url>
 	<types>
 		<type>Other</type>
 	</types>
 	<authors>
 		<author>
-          		<name github="symphonists" symphony="community">Symphony Community</name>
-    		</author>
+			<name github="symphonists" symphony="community">Symphony Community</name>
+		</author>
 		<author>
 			<name github="nickdunn" symphony="nickdunn">Nick Dunn</name>
 			<website>http://nick-dunn.co.uk</website>
 		</author>
 	</authors>
 	<releases>
-		<release version="1.2.0" date="2012-03-09" min="2.3.x">
+		<release version="1.3.0" date="2014-08-08" min="2.4">
+			- Update for Symphony 2.4
+			- #9/#11 - Ensure `REST_Entries` class exists
+			- Fix Group By for GET
+		</release>
+		<release version="1.2.0" date="2012-03-09" min="2.3.x" max="2.4">
 			- Updated for Symphony 2.3
 		</release>
 		<release version="1.1.1" date="2011-10-11" min="2.2.0" max="2.2.x" />
