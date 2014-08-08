@@ -23,7 +23,7 @@
 							'website' => 'http://symphony-demo',
 							'email' => 'nick.dunn@airlock.com'),
 					 'version' => '1.0',
-					 'release-date' => '2009-11-12T08:14:58+00:00');	
+					 'release-date' => '2009-11-12T08:14:58+00:00');
 		}
 
 		public function getSource(){
@@ -57,15 +57,13 @@
 			if (!is_null(REST_Entries::getDatasourceParam('sort'))) $this->dsParamSORT = REST_Entries::getDatasourceParam('sort');
 			if (!is_null(REST_Entries::getDatasourceParam('order'))) $this->dsParamORDER = REST_Entries::getDatasourceParam('order');
 
-			if (!is_null(REST_Entries::getDatasourceParam('group_by'))) {
-				$field = end(Symphony::Database()->fetch(
-					sprintf(
-						"SELECT id FROM `tbl_fields` WHERE `parent_section` = %d AND `element_name` = '%s'",
-						Symphony::Database()->cleanValue(REST_Entries::getSectionId()),
-						Symphony::Database()->cleanValue(REST_Entries::getDatasourceParam('group_by'))
-					)
-				));
-				if ($field) $this->dsParamGROUP = $field['id'];
+			// Do grouping
+			if (!is_null(REST_Entries::getDatasourceParam('groupby'))) {
+				$field_id = FieldManager::fetchFieldIDFromElementName(
+					REST_Entries::getDatasourceParam('groupby'),
+					REST_Entries::getSectionId()
+				);
+				if ($field_id) $this->dsParamGROUP = $field_id;
 			}
 
 			// if API is calling a known entry, filter on System ID only
