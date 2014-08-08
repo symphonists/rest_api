@@ -101,17 +101,18 @@ Class REST_Entries {
 	}
 	
 	public function sendOutput($xml) {
-		$dom = simplexml_load_string($xml);
 		switch(REST_API::getHTTPMethod()) {
 			case 'get':
-				$xml = $dom->xpath('/data/response');
+				$xml = $xml->getChildrenByName('response');
 				if(is_array($xml)) $xml = reset($xml);
-				REST_API::sendOutput($xml->asXML());
+				REST_API::sendOutput($xml);
 			break;
 			case 'post':
-				$xml = $dom->xpath('/data/events/response');
+				$xml = $xml->getChildrenByName('events');
 				if(is_array($xml)) $xml = reset($xml);
-				REST_API::sendOutput($xml->asXML());
+				$xml = $xml->getChildrenByName('response');
+				if(is_array($xml)) $xml = reset($xml);
+				REST_API::sendOutput($xml);
 			break;
 		}
 	}
