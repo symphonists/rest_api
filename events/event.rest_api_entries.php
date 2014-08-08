@@ -1,10 +1,11 @@
 <?php
 
 	require_once(TOOLKIT . '/class.event.php');
+	require_once(EXTENSIONS . '/rest_api/plugins/entries/rest.entries.php');
 	
-	Class EventREST_API_Entries extends Event{
+	Class EventREST_API_Entries extends SectionEvent {
 
-		const ROOTELEMENT = 'response';
+		public $ROOTELEMENT = 'response';
 
 		public $eParamFILTERS = array();
 
@@ -28,20 +29,14 @@
 			return '';
 		}
 
-		public function load(){			
-			return $this->__trigger();
-		}
-
-		protected function __trigger(){
-			
+		public function load(){
 			if (is_array($_POST['fields'][0])) {
 				$this->eParamFILTERS = array('expect-multiple');
 			} elseif (!is_null(REST_Entries::getEntryId())) {
 				$_POST['id'] = REST_Entries::getEntryId();
 			}
-			
-			include(TOOLKIT . '/events/event.section.php');
-			return $result;
-		}		
+
+			return $this->__trigger();
+		}
 
 	}

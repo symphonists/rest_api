@@ -101,6 +101,7 @@ Class REST_Entries {
 	}
 	
 	public function sendOutput($xml) {
+
 		switch(REST_API::getHTTPMethod()) {
 			case 'get':
 				$xml = $xml->getChildrenByName('response');
@@ -110,8 +111,10 @@ Class REST_Entries {
 			case 'post':
 				$xml = $xml->getChildrenByName('events');
 				if(is_array($xml)) $xml = reset($xml);
+
 				$xml = $xml->getChildrenByName('response');
 				if(is_array($xml)) $xml = reset($xml);
+
 				REST_API::sendOutput($xml);
 			break;
 		}

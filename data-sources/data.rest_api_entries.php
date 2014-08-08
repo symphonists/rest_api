@@ -2,8 +2,9 @@
 
 	require_once(TOOLKIT . '/class.datasource.php');
 	require_once(TOOLKIT . '/class.fieldmanager.php');
+	require_once(EXTENSIONS . '/rest_api/plugins/entries/rest.entries.php');
 	
-	Class DatasourceREST_API_Entries extends Datasource{
+	Class DatasourceREST_API_Entries extends SectionDatasource {
 
 		public $dsParamROOTELEMENT = 'response';
 		public $dsParamORDER = 'desc';
@@ -30,20 +31,14 @@
 		}
 
 		public function grab(&$param_pool){
-			$result = new XMLElement($this->dsParamROOTELEMENT);
-			
 			// remove placeholder elements
 			unset($this->dsParamINCLUDEDELEMENTS);
 
 			// fill with all included elements if none are set
 			if (is_null(REST_Entries::getDatasourceParam('included_elements'))) {
 				// get all fields in this section
-				$fields = Symphony::Database()->fetch(
-					sprintf(
-						"SELECT element_name FROM `tbl_fields` WHERE `parent_section` = %d",
-						Symphony::Database()->cleanValue(REST_Entries::getSectionId())
-					)
-				);
+				$fields = FieldManager::fetchFieldsSchema(REST_Entries::getSectionId());
+
 				// add them to the data source
 				foreach($fields as $field) {
 					$this->dsParamINCLUDEDELEMENTS[] = $field['element_name'];
@@ -82,33 +77,16 @@
 
 				foreach(REST_Entries::getDatasourceParam('filters') as $field_handle => $filter_value) {
 					$filter_value = rawurldecode($filter_value);
-					$field_id = Symphony::Database()->fetchVar('id', 0, 
-						sprintf(
-							"SELECT `f`.`id` 
-							FROM `tbl_fields` AS `f`, `tbl_sections` AS `s` 
-							WHERE `s`.`id` = `f`.`parent_section` 
-							AND f.`element_name` = '%s' 
-							AND `s`.`handle` = '%s' LIMIT 1",
-							Symphony::Database()->cleanValue($field_handle),
-							Symphony::Database()->cleanValue(REST_Entries::getSectionHandle())
-						)
+					$field_id = FieldManager::fetchFieldIDFromElementName(
+						$field_handle, 
+						REST_Entries::getSectionId()
 					);
 					if(is_numeric($field_id)) $this->dsParamFILTERS[$field_id] = $filter_value;
 				}
 
-			}			
-			
-			try{
-				include(TOOLKIT . '/data-sources/datasource.section.php');
 			}
-			catch(Exception $e){
-				$result->appendChild(new XMLElement('error', $e->getMessage()));
-				return $result;
-			}
-			if($this->_force_empty_result) $result = $this->emptyXMLSet();
 
-			return $result;		
-
+			return $this->execute($param_pool);
 		}
 
 	}

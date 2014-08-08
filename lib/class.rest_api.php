@@ -14,7 +14,7 @@ Class REST_API {
 	private static $_plugin_class = NULL;
 	
 	private function __authenticate() {
-		$logged_in = Frontend::instance()->isLoggedIn();
+		$logged_in = Symphony::Engine()->isLoggedIn();
 		if (!$logged_in) self::sendError('API is private. Authentication failed.', 403);
 	}
 	
@@ -47,7 +47,7 @@ Class REST_API {
 		array_shift(self::$_uri);
 		
 		// include the plugin!
-		@include(EXTENSIONS . "/rest_api/plugins/$plugin_name/rest.$plugin_name.php");
+		require_once(EXTENSIONS . "/rest_api/plugins/$plugin_name/rest.$plugin_name.php");
 		if (!class_exists(self::$_plugin_class)) REST_API::sendError(sprintf("Plugin '%s' does not exist.", self::$_plugin_class), 404);
 		
 		// perform global API authentication
