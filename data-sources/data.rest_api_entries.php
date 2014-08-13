@@ -30,7 +30,7 @@
 			return REST_Entries::getSectionId();
 		}
 
-		public function grab(&$param_pool){
+		public function grab(array &$param_pool = NULL){
 			// remove placeholder elements
 			unset($this->dsParamINCLUDEDELEMENTS);
 

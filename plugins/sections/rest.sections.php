@@ -9,7 +9,7 @@ Class REST_Sections {
 	private static $_sections = NULL;
 	private static $_field_attributes = array('id', 'label', 'type', 'sortorder', 'location', 'show_column');
 	
-	public function init() {
+	public static function init() {
 		
 		if(REST_API::getOutputFormat() == 'csv') {
 			REST_API::sendError(sprintf('%s output format not supported.', strtoupper(REST_API::getOutputFormat())), 401, 'xml');
@@ -36,7 +36,7 @@ Class REST_Sections {
 		self::$_sections = $sections;
 	}
 	
-	public function get() {
+	public static function get() {
 			
 		$response = new XMLElement('response');
 		

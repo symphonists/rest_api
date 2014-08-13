@@ -4,13 +4,13 @@ require_once(TOOLKIT . '/class.authormanager.php');
 
 Class REST_Authors {
 	
-	public function init() {
+	public static function init() {
 		if(REST_API::getOutputFormat() == 'csv') {
 			REST_API::sendError(sprintf('%s output format not supported.', strtoupper(REST_API::getOutputFormat())), 401, 'xml');
 		}
 	}
 	
-	public function get() {
+	public static function get() {
 		
 		$url_parts = REST_API::getRequestURI();
 		$author_url = $url_parts[0];
@@ -35,7 +35,7 @@ Class REST_Authors {
 		REST_API::sendOutput($response);		
 	}
 	
-	private function __buildAuthorXML($author){
+	private static function __buildAuthorXML($author){
 		
 		$author_xml = new XMLElement('author');
 

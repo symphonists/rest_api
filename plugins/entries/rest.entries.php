@@ -11,27 +11,27 @@ Class REST_Entries {
 	private static $_entry_id = NULL;
 	private static $_ds_params = array();
 	
-	public function setDatasourceParam($name, $value) {
+	public static function setDatasourceParam($name, $value) {
 		self::$_ds_params[$name] = $value;
 	}
 	
-	public function getDatasourceParam($name) {
+	public static function getDatasourceParam($name) {
 		return self::$_ds_params[$name];
 	}
 	
-	public function getSectionId() {
+	public static function getSectionId() {
 		return self::$_section_id;
 	}
 	
-	public function getSectionHandle() {
+	public static function getSectionHandle() {
 		return self::$_section_handle;
 	}
 	
-	public function getEntryId() {
+	public static function getEntryId() {
 		return self::$_entry_id;
 	}
 	
-	public function init() {
+	public static function init() {
 		
 		if(REST_API::getOutputFormat() == 'csv' && !REST_API::getHTTPMethod() == 'get') {
 			REST_API::sendError(sprintf(
@@ -65,7 +65,7 @@ Class REST_Entries {
 		
 	}
 	
-	public function delete() {
+	public static function delete() {
 
 		$entry = EntryManager::fetch(self::$_entry_id);
 		
@@ -90,17 +90,17 @@ Class REST_Entries {
 	Page delegates fire up to and including FrontendOutputPreGenerate, but _not_ any after, since
 	the page does not fully load — we return the API response before the page XSLT transformation occurs
 	*/
-	public function post() {
+	public static function post() {
 		REST_API::isFrontendPageRequest(TRUE);
 		Frontend::instance()->display(NULL);
 	}
 	
-	public function get() {
+	public static function get() {
 		REST_API::isFrontendPageRequest(TRUE);
 		Frontend::instance()->display(NULL);
 	}
 	
-	public function sendOutput($xml) {
+	public static function sendOutput($xml) {
 
 		switch(REST_API::getHTTPMethod()) {
 			case 'get':

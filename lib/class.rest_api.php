@@ -13,25 +13,25 @@ Class REST_API {
 	private static $_plugin_name = NULL;
 	private static $_plugin_class = NULL;
 	
-	private function __authenticate() {
+	private static function __authenticate() {
 		$logged_in = Symphony::Engine()->isLoggedIn();
 		if (!$logged_in) self::sendError('API is private. Authentication failed.', 403);
 	}
 	
-	public function isFrontendPageRequest($is_frontend_page=NULL) {
+	public static function isFrontendPageRequest($is_frontend_page=NULL) {
 		if(isset($is_frontend_page)) self::$_is_frontend_page = $is_frontend_page;
 		return self::$_is_frontend_page;
 	}
 	
-	public function getOutputFormat() {
+	public static function getOutputFormat() {
 		return self::$_output_type;
 	}
 	
-	public function getHTTPMethod() {
+	public static function getHTTPMethod() {
 		return self::$_http_method;
 	}
 	
-	public function init() {
+	public static function init() {
 		
 		// store request parameters for later
 		self::$_token = trim($_REQUEST['token']);
@@ -66,11 +66,11 @@ Class REST_API {
 		}
 	}
 	
-	public function getRequestURI() {
+	public static function getRequestURI() {
 		return self::$_uri;
 	}
 	
-	public function sendOutput($response_body=NULL, $code=200) {
+	public static function sendOutput($response_body=NULL, $code=200) {
 		
 		switch($code) {
 			case 200: header('HTTP/1.0 200 OK'); break;
@@ -161,7 +161,7 @@ Class REST_API {
 		exit;
 	}
 	
-	public function sendError($message=NULL, $code=200, $format=NULL) {
+	public static function sendError($message=NULL, $code=200, $format=NULL) {
 		if($format) self::$_output_type = $format;
 		$response = new XMLElement('response', NULL, array(
 			'result' => 'error',

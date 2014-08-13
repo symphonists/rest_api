@@ -55,7 +55,7 @@ Class XMLToArray {
 	}
 
 	// Remove recursion in result array
-	private function deleteParents(&$ary) {
+	private static function deleteParents(&$ary) {
 		foreach ($ary as $k => $v) {
 			if ($k === '_p') {
 				unset($ary[$k]);
