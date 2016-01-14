@@ -17,6 +17,9 @@
 		</author>
 	</authors>
 	<releases>
+		<release version="1.4.0" date="2014-08-08" min="2.4.0" max="2.6.x">
+			- Update for Symphony 2.6
+		</release>
 		<release version="1.3.0" date="2014-08-08" min="2.4">
 			- Update for Symphony 2.4
 			- #9/#11 - Ensure `REST_Entries` class exists
