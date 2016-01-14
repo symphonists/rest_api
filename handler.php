@@ -1,9 +1,10 @@
 <?php
 // set up Symphony 
 define('DOCROOT', rtrim(dirname(__FILE__), '/') . '/../..');
-require_once(DOCROOT . '/vendor/autoload.php');
+if (file_exists(DOCROOT . '/vendor/autoload.php')) {
+	require_once(DOCROOT . '/vendor/autoload.php');
+}
 require_once(DOCROOT . '/symphony/lib/boot/bundle.php');
-//require_once(CORE . '/class.administration.php');
 require_once(CORE . '/class.frontend.php');
 
 // include the extension core
