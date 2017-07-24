@@ -19,7 +19,7 @@ Class REST_Authors {
 
 		if (isset($author_url)) {
 			if (is_numeric($author_url)) {
-				$author = AuthorManager::fetchByID($author_url);	
+				$author = AuthorManager::fetchByID($author_url);
 			} else {
 				$author = AuthorManager::fetchByUsername($author_url);
 			}
@@ -32,7 +32,7 @@ Class REST_Authors {
 			}
 		}
 		
-		REST_API::sendOutput($response);		
+		REST_API::sendOutput($response);
 	}
 	
 	private static function __buildAuthorXML($author){
@@ -40,6 +40,9 @@ Class REST_Authors {
 		$author_xml = new XMLElement('author');
 
 		foreach($author->get() as $key => $value){
+			if ($key === 'password') {
+				continue;
+			}
 			$value = General::sanitize($value);
 			if ($value != '') {
 				$author_xml->appendChild(
