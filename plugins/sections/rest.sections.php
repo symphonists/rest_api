@@ -53,13 +53,16 @@ Class REST_Sections {
 				$meta = $field->get();
 				unset($meta['field_id']);
 				
-				$field_xml = new XMLElement($meta['element_name'], null);					
+				$field_xml = new XMLElement($meta['element_name'], null);
 				
 				foreach(self::$_field_attributes as $attr) $field_xml->setAttribute(Lang::createHandle($attr), $meta[$attr]);
 				
 				foreach($meta as $key => $value) {
 					if (in_array($key, self::$_field_attributes)) continue;
-					$value = General::sanitize($value);
+					if (!is_array($value)) {
+						$value = array($value);
+					}
+					$value = General::sanitize(implode(',', $value));
 					if ($value != '') {
 						$field_xml->appendChild(new XMLElement(Lang::createHandle($key), General::sanitize($value)));
 					}
