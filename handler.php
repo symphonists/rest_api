@@ -1,6 +1,7 @@
 <?php
 // set up Symphony 
 define('DOCROOT', rtrim(dirname(__FILE__), '/') . '/../..');
+chdir(DOCROOT);
 if (file_exists(DOCROOT . '/vendor/autoload.php')) {
 	require_once(DOCROOT . '/vendor/autoload.php');
 }
