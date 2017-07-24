@@ -3,7 +3,7 @@
 	<name>REST API</name>
 	<description>A read/write RESTful API on top of Symphony authors, sections and entry content. Supports XML, JSON, YAML, serialised PHP and CSV output.</description>
 	<repo type="github">https://github.com/symphonists/rest_api</repo>
-	<url type="discuss">http://getsymphony.com/discuss/thread/65084/</url>
+	<url type="discuss">https://www.getsymphony.com/discuss/thread/65084/</url>
 	<types>
 		<type>Other</type>
 	</types>
@@ -17,6 +17,10 @@
 		</author>
 	</authors>
 	<releases>
+		<release version="1.4.1" date="2017-07-24" min="2.4.0" max="2.x.x">
+			- Fix various issues
+			- Fix broken entries page
+		</release>
 		<release version="1.4.0" date="2014-08-08" min="2.4.0" max="2.6.x">
 			- Update for Symphony 2.6
 		</release>
