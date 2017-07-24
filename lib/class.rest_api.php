@@ -35,7 +35,7 @@ Class REST_API {
 		
 		// store request parameters for later
 		self::$_token = trim($_REQUEST['token']);
-		self::$_output_type = (isset($_REQUEST['format']) ? $_REQUEST['format'] : 'xml');		
+		self::$_output_type = (isset($_REQUEST['format']) ? $_REQUEST['format'] : 'xml');
 		self::$_uri = explode('/', trim($_REQUEST['url'], '/'));
 		self::$_http_method = strtolower($_SERVER['REQUEST_METHOD']);
 		
@@ -47,7 +47,12 @@ Class REST_API {
 		array_shift(self::$_uri);
 		
 		// include the plugin!
-		require_once(EXTENSIONS . "/rest_api/plugins/$plugin_name/rest.$plugin_name.php");
+		if (empty($plugin_name)) REST_API::sendError('Nothing here', 404);
+		try {
+			require_once(EXTENSIONS . "/rest_api/plugins/$plugin_name/rest.$plugin_name.php");
+		} catch (Exception $ex) {
+			// ignore
+		}
 		if (!class_exists(self::$_plugin_class)) REST_API::sendError(sprintf("Plugin '%s' does not exist.", self::$_plugin_class), 404);
 		
 		// perform global API authentication
@@ -73,10 +78,10 @@ Class REST_API {
 	public static function sendOutput($response_body=NULL, $code=200) {
 		
 		switch($code) {
-			case 200: header('HTTP/1.0 200 OK'); break;
-			case 401: header('HTTP/1.0 401 Bad Request'); break;
-			case 403: header('HTTP/1.0 403 Forbidden'); break;
-			case 404: header('HTTP/1.0 404 Not Found'); break;
+			case 200: header('HTTP/1.1 200 OK'); break;
+			case 401: header('HTTP/1.1 401 Bad Request'); break;
+			case 403: header('HTTP/1.1 403 Forbidden'); break;
+			case 404: header('HTTP/1.1 404 Not Found'); break;
 		}
 		
 		$xml = $response_body;
@@ -87,7 +92,7 @@ Class REST_API {
 			
 			case 'json':
 				header('Content-Type: text/plain; charset=utf-8');
-				$output = json_encode(XMLToArray::convert($xml));				
+				$output = json_encode(XMLToArray::convert($xml));
 			break;
 			
 			case 'serialise':
