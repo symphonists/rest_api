@@ -3,7 +3,7 @@
 	require_once(TOOLKIT . '/class.datasource.php');
 	require_once(TOOLKIT . '/class.fieldmanager.php');
 	require_once(EXTENSIONS . '/rest_api/plugins/entries/rest.entries.php');
-	
+
 	Class DatasourceREST_API_Entries extends SectionDatasource {
 
 		public $dsParamROOTELEMENT = 'response';
@@ -30,7 +30,7 @@
 			return REST_Entries::getSectionId();
 		}
 
-		public function grab(array &$param_pool = NULL){
+		public function grab(array &$param_pool = null){
 			// remove placeholder elements
 			unset($this->dsParamINCLUDEDELEMENTS);
 
@@ -76,7 +76,7 @@
 				foreach(REST_Entries::getDatasourceParam('filters') as $field_handle => $filter_value) {
 					$filter_value = rawurldecode($filter_value);
 					$field_id = FieldManager::fetchFieldIDFromElementName(
-						$field_handle, 
+						$field_handle,
 						REST_Entries::getSectionId()
 					);
 					if(is_numeric($field_id)) $this->dsParamFILTERS[$field_id] = $filter_value;
