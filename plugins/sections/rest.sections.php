@@ -21,12 +21,25 @@ Class REST_Sections {
 		$sections = null;
 
 		if(is_null($section_reference)) {
-			$sections = SectionManager::fetch();
+			$sections = (new SectionManager)
+				->select()
+				->execute()
+				->rows();
 		} elseif(is_numeric($section_reference)) {
-			$sections = SectionManager::fetch($section_reference);
+			$sections = (new SectionManager)
+				->select()
+				->section($section_reference)
+				->execute()
+				->next();
 		} else {
 			$section_id = SectionManager::fetchIDFromHandle($section_reference);
-			if($section_id) $sections = SectionManager::fetch($section_id);
+			if ($section_id) {
+				$sections = (new SectionManager)
+					->select()
+					->section($section_id)
+					->execute()
+					->next();
+			}
 		}
 
 		if(!is_array($sections)) $sections = array($sections);

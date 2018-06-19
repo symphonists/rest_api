@@ -67,7 +67,11 @@ Class REST_Entries {
 
 	public static function delete() {
 
-		$entry = EntryManager::fetch(self::$_entry_id);
+		$entry = (new EntryManager)
+			->select()
+			->entry(self::$_entry_id)
+			->execute()
+			->next();
 
 		if(!$entry) {
 			REST_API::sendError('Entry not found.', 404);
