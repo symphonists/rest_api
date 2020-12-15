@@ -82,6 +82,8 @@ Incomplete documentation. Eventually similar documentation to Section Schemas ex
 
 The Entries plugin provides the same functionality of data sources (read entries) and events (create and update entries).
 
+Please note, this plugin assumes your Symphony installation has at least a Page assigned the type index.
+
 To **list entries** from a section:
 
 	/symphony/api/entries/:section_handle
